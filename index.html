@@ -28,9 +28,10 @@
 	<div id="mainMenu" class="medieval-menu">
 		<h2>TerraBuild</h2>
 		<div class="subtitle">Aventura Medieval</div>
-		<button class="menu-item" onclick="startGame()">Jugar</button>
+		<button class="menu-item" onclick="startOriginalGame()">Jugar Original</button>
+		<button class="menu-item" onclick="startGame()">Mundo Medieval</button>
 		<button class="menu-item" onclick="showOptions()">Opciones</button>
-		<button class="menu-item" onclick="showCredits()">Créditos</button>
+		<button class="menu-item" onclick="showControls()">Controles</button>
 	</div>
 
 	<!-- Pantalla de Juego -->
@@ -58,7 +59,8 @@
 			{
 				"imports": {
 					"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+					"./medieval-world.js": "./medieval-world.js"
 				}
 			}
 		</script>
@@ -88,21 +90,53 @@
 			let gameStarted = false;
 			let animationId;
 
-			// Funciones del menú
-			function startGame() {
+			// Hacer funciones globales para onclick
+			window.startOriginalGame = function() {
+				document.getElementById('backgroundVideo').style.display = 'none';
+				document.getElementById('mainMenu').style.display = 'none';
+				document.getElementById('gameScreen').style.display = 'block';
+				
+				// Limpiar contenedor
+				const container = document.getElementById('container');
+				container.innerHTML = '';
+				
+				if (!gameStarted) {
+					init();
+					gameStarted = true;
+				} else {
+					// Reiniciar renderer si ya existe
+					if (renderer) {
+						container.appendChild(renderer.domElement);
+					}
+				}
+				
+				animate();
+			};
+
+			window.startGame = function() {
 				document.getElementById('backgroundVideo').style.display = 'none';
 				document.getElementById('mainMenu').style.display = 'none';
 				document.getElementById('gameScreen').style.display = 'block';
 				
 				if (!gameStarted) {
-					init();
+					// Cargar mundo medieval mejorado
+					loadMedievalWorld();
 					gameStarted = true;
+				} else {
+					// Si ya hay un juego iniciado, solo mostrar el medieval
+					loadMedievalWorld();
 				}
-				
-				animate();
-			}
+			};
 
-			function backToMenu() {
+			window.showOptions = function() {
+				alert('Opciones del juego - Próximamente');
+			};
+
+			window.showControls = function() {
+				alert('🎮 CONTROLES TERRABUILD\n\n🏹 MUNDO ORIGINAL:\n• Clic izquierdo: Avanzar\n• Clic derecho: Retroceder\n• Movimiento libre con mouse\n\n🏰 MUNDO MEDIEVAL:\n• Cámara automática rotativa\n• Observa el castillo y estructuras\n\n🏠 VUELTA AL MENÚ:\n• Botón "Menú" en esquina superior derecha');
+			};
+
+			window.backToMenu = function() {
 				document.getElementById('gameScreen').style.display = 'none';
 				document.getElementById('mainMenu').style.display = 'block';
 				document.getElementById('backgroundVideo').style.display = 'block';
@@ -110,15 +144,27 @@
 				if (animationId) {
 					cancelAnimationFrame(animationId);
 				}
-			}
+			};
 
-			function showOptions() {
-				alert('Opciones del juego - Próximamente');
-			}
-
-			function showCredits() {
-				alert('TerraBuild - Juego Medieval\nCreado con Three.js\nVersión 1.0');
-			}
+			window.loadMedievalWorld = function() {
+				// Limpiar contenedor
+				const container = document.getElementById('container');
+				container.innerHTML = '';
+				
+				// Cargar script del mundo medieval dinámicamente
+				const script = document.createElement('script');
+				script.type = 'module';
+				script.src = './medieval-world.js';
+				script.onload = () => {
+					console.log('Mundo medieval cargado');
+				};
+				script.onerror = () => {
+					console.error('Error al cargar mundo medieval');
+					// Cargar mundo original como fallback
+					init();
+				};
+				document.head.appendChild(script);
+			};
 
 			function init() {
 
