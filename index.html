@@ -18,13 +18,47 @@
 	<body>
 
 		<div id="container"></div>
-		<div id="info"><a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - <a href="http://www.minecraft.net/" target="_blank" rel="noopener">minecraft</a> demo. featuring <a href="http://painterlypack.net/" target="_blank" rel="noopener">painterly pack</a><br />(left click: forward, right click: backward)</div>
+	
+	<!-- Video de fondo pantalla completa -->
+	<video id="backgroundVideo" autoplay muted loop>
+		<source src="img/menu principal.mp4" type="video/mp4">
+	</video>
+	
+	<!-- Menú Principal Medieval -->
+	<div id="mainMenu" class="medieval-menu">
+		<h2>TerraBuild</h2>
+		<div class="subtitle">Aventura Medieval</div>
+		<button class="menu-item" onclick="startGame()">Jugar</button>
+		<button class="menu-item" onclick="showOptions()">Opciones</button>
+		<button class="menu-item" onclick="showCredits()">Créditos</button>
+	</div>
+
+	<!-- Pantalla de Juego -->
+	<div id="gameScreen" style="display: none;">
+		<div id="info">TerraBuild - Juego Medieval tipo Minecraft<br />(clic izquierdo: avanzar, clic derecho: retroceder)</div>
+		<div id="container"></div>
+		<div class="medieval-hud">
+			<div class="hud-item">
+				<span class="hud-icon"></span>
+				<span>Vida: 100</span>
+			</div>
+			<div class="hud-item">
+				<span class="hud-icon"></span>
+				<span>Energía: 100</span>
+			</div>
+			<div class="hud-item">
+				<span class="hud-icon"></span>
+				<span>Bloques: 64</span>
+			</div>
+		</div>
+		<button class="menu-item" onclick="backToMenu()" style="position: absolute; top: 20px; right: 20px; min-width: 100px; padding: 10px 20px;">Menú</button>
+	</div>
 
 		<script type="importmap">
 			{
 				"imports": {
-					"three": "../build/three.module.js",
-					"three/addons/": "./jsm/"
+					"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
 				}
 			}
 		</script>
@@ -48,10 +82,43 @@
 			const worldHalfDepth = worldDepth / 2;
 			const data = generateHeight( worldWidth, worldDepth );
 
-			const timer = new THREE.Timer();
-			timer.connect( document );
+			const clock = new THREE.Clock();
 
-			init();
+			// Variables del juego
+			let gameStarted = false;
+			let animationId;
+
+			// Funciones del menú
+			function startGame() {
+				document.getElementById('backgroundVideo').style.display = 'none';
+				document.getElementById('mainMenu').style.display = 'none';
+				document.getElementById('gameScreen').style.display = 'block';
+				
+				if (!gameStarted) {
+					init();
+					gameStarted = true;
+				}
+				
+				animate();
+			}
+
+			function backToMenu() {
+				document.getElementById('gameScreen').style.display = 'none';
+				document.getElementById('mainMenu').style.display = 'block';
+				document.getElementById('backgroundVideo').style.display = 'block';
+				
+				if (animationId) {
+					cancelAnimationFrame(animationId);
+				}
+			}
+
+			function showOptions() {
+				alert('Opciones del juego - Próximamente');
+			}
+
+			function showCredits() {
+				alert('TerraBuild - Juego Medieval\nCreado con Three.js\nVersión 1.0');
+			}
 
 			function init() {
 
@@ -167,7 +234,6 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.setAnimationLoop( animate );
 				container.appendChild( renderer.domElement );
 
 				controls = new FirstPersonControls( camera, renderer.domElement );
@@ -233,7 +299,8 @@
 
 			function animate() {
 
-				timer.update();
+				animationId = requestAnimationFrame( animate );
+				const delta = clock.getDelta();
 
 				render();
 				stats.update();
@@ -242,7 +309,7 @@
 
 			function render() {
 
-				controls.update( timer.getDelta() );
+				controls.update( clock.getDelta() );
 				renderer.render( scene, camera );
 
 			}
