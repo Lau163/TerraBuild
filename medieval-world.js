@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // 1. Configuración Básica Mejorada
 const scene = new THREE.Scene();
@@ -17,6 +18,41 @@ if (container) {
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 }
+
+// Sistema de Entidades 3D para mundo medieval
+const loader = new GLTFLoader();
+let entidadesCargadas = [];
+
+// Función para cargar entidades en el mundo medieval
+window.cargarEntidadMedieval = function(path, position) {
+    loader.load(path, (gltf) => {
+        const modelo = gltf.scene;
+        modelo.position.set(position.x, position.y, position.z);
+        modelo.scale.set(0.5, 0.5, 0.5);
+        modelo.castShadow = true;
+        modelo.receiveShadow = true;
+        scene.add(modelo);
+        entidadesCargadas.push(modelo);
+        console.log("Entidad medieval cargada:", path);
+    }, undefined, (error) => {
+        console.error("Error al cargar entidad medieval:", error);
+    });
+};
+
+// Función para crear entidades en el mundo medieval
+window.crearEntidadesEnMundoMedieval = function() {
+    // Caballeros guardianes del castillo
+    cargarEntidadMedieval('assets/models/caballero.glb', {x: 10, y: 2, z: 10});
+    cargarEntidadMedieval('assets/models/caballero.glb', {x: -10, y: 2, z: 10});
+    
+    // Aldeanos cerca del castillo
+    cargarEntidadMedieval('assets/models/aldeano.glb', {x: 5, y: 1, z: 5});
+    cargarEntidadMedieval('assets/models/aldeano.glb', {x: -5, y: 1, z: 5});
+    
+    // Objetos en el mundo
+    cargarEntidadMedieval('assets/models/espada_medieval.glb', {x: 0, y: 1, z: 0});
+    cargarEntidadMedieval('assets/models/espada_medieval.glb', {x: 2, y: 1, z: 2});
+};
 
 // 2. Iluminación Medieval Mejorada
 const sunLight = new THREE.DirectionalLight(0xffd700, 1.2); // Luz dorada medieval
@@ -170,6 +206,11 @@ window.addEventListener('resize', () => {
 // Inicializar mundo
 createWorld();
 animate();
+
+// Cargar entidades después de un pequeño delay
+setTimeout(() => {
+    crearEntidadesEnMundoMedieval();
+}, 2000);
 
 // Exportar para acceso global
 window.medievalWorldLoaded = true;
