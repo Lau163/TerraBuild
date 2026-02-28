@@ -32,6 +32,11 @@
     </div>
     <!-- Botón de inicio forzado -->
     <button id="force-start" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(139, 69, 19, 0.3); color:#d4af37; border:2px solid rgba(212, 175, 55, 0.6); padding:20px 40px; cursor:pointer; font-family: 'Times New Roman', serif; font-size:18px; border-radius:10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); backdrop-filter: blur(3px); display:none;">🎵 Iniciar con Música</button>
+    
+    <!-- Indicador de carga -->
+    <div id="loading-indicator" style="position:absolute; top:20px; left:50%; transform:translateX(-50%); background:rgba(139, 69, 19, 0.9); color:#d4af37; padding:10px 20px; border-radius:5px; border:1px solid #d4af37; font-family: 'Times New Roman', serif; font-size:14px; display:none;">
+        🎵 Cargando música de intro...
+    </div>
 </div>
 
 <!-- Audio del Menú Principal -->
@@ -181,29 +186,44 @@
 			const muteBtn = document.getElementById('mute-btn');
 			const volumeSlider = document.getElementById('volume-slider');
 			const forceStartBtn = document.getElementById('force-start');
+			const loadingIndicator = document.getElementById('loading-indicator');
 
 			// Función para iniciar el juego después de la intro
 			window.iniciarJuego = function() {
 				introContainer.style.display = 'none';
 				introVideo.pause();
-				introMusic.pause();
+				// NO pausar música - mantener continuidad
+				// introMusic.pause(); // Comentado para continuidad
 				startMenuMusic();
 			};
 
 			// Función para iniciar música del menú
 			window.startMenuMusic = function() {
+				// Si la música de intro está reproduciéndose, continuar con la misma
+				if (!introMusic.paused) {
+					console.log('🎵 Continuando música de intro en el menú');
+					// Bajar volumen para el menú pero mantener la misma canción
+					introMusic.volume = 0.3;
+					// No iniciar nueva música, solo ajustar volumen
+					return;
+				}
+				
+				// Solo iniciar música del menú si la intro no está activa
 				menuMusic.volume = 0.3;
 				menuMusic.play().catch(e => console.log('Música del menú bloqueada'));
 			};
 
 			// Función para forzar inicio con música
 			window.forceStartWithMusic = function() {
+				loadingIndicator.style.display = 'block'; // Mostrar indicador de carga
 				introMusic.volume = 0.5;
 				introMusic.play().then(() => {
 					console.log('🎵 Música de intro iniciada manualmente');
 					forceStartBtn.style.display = 'none'; // Ocultar botón después de iniciar
+					loadingIndicator.style.display = 'none'; // Ocultar indicador
 				}).catch(e => {
 					console.log('❌ Error al iniciar música:', e);
+					loadingIndicator.style.display = 'none'; // Ocultar indicador incluso si hay error
 					alert('No se pudo reproducir la música. Asegúrate de tener archivos de audio en la carpeta assets/music/');
 				});
 				introVideo.play().catch(e => console.log('Video no disponible'));
@@ -211,6 +231,7 @@
 
 			// Configurar controles de música
 			muteBtn.addEventListener('click', function() {
+				// Controlar tanto intro como menu music
 				if (introMusic.muted && menuMusic.muted) {
 					introMusic.muted = false;
 					menuMusic.muted = false;
@@ -224,6 +245,7 @@
 
 			volumeSlider.addEventListener('input', function() {
 				const volume = this.value / 100;
+				// Aplicar volumen a ambas músicas para continuidad
 				introMusic.volume = volume;
 				menuMusic.volume = volume * 0.6; // Menú más bajo
 			});
@@ -236,20 +258,36 @@
 			// Iniciar intro al cargar la página
 			window.addEventListener('load', function() {
 				introContainer.style.display = 'block';
+				loadingIndicator.style.display = 'block'; // Mostrar indicador al inicio
 				introMusic.volume = 0.5;
 				
 				// Intentar autoplay primero
 				introMusic.play().then(() => {
 					console.log('🎵 Música de intro iniciada automáticamente');
 					forceStartBtn.style.display = 'none'; // Ocultar si autoplay funciona
+					loadingIndicator.style.display = 'none'; // Ocultar indicador si funciona
 				}).catch(e => {
 					console.log('⚠️ Autoplay bloqueado - Mostrando botón de inicio manual');
+					loadingIndicator.style.display = 'none'; // Ocultar indicador si hay error
 					// Mostrar botón de inicio forzado
 					forceStartBtn.style.display = 'block';
 				});
 				
-				introVideo.play().catch(e => {
-					console.log('Video no disponible, continuando sin video');
+				// Reproducir video de intro con música sincronizada
+				introVideo.play().then(() => {
+					console.log('🎬 Video de intro iniciado');
+					// Asegurar que la música esté sincronizada con el video
+					if (introMusic.paused) {
+						introMusic.play().catch(e => console.log('Música bloqueada'));
+					}
+				}).catch(e => {
+					console.log('Video no disponible, continuando con música');
+					// Si el video falla, seguir con música
+					setTimeout(() => {
+						if (!introMusic.paused) {
+							console.log('🎵 Música de intro reproduciéndose sin video');
+						}
+					}, 1000);
 				});
 			});
 
@@ -259,8 +297,8 @@
 				document.getElementById('mainMenu').style.display = 'none';
 				document.getElementById('gameScreen').style.display = 'block';
 				
-				// Pausar música del menú al iniciar juego
-				menuMusic.pause();
+				// NO pausar música del menú - mantener continuidad
+				// menuMusic.pause(); // Comentado para continuidad
 				
 				// Limpiar contenedor
 				const container = document.getElementById('container');
@@ -284,8 +322,8 @@
 				document.getElementById('mainMenu').style.display = 'none';
 				document.getElementById('gameScreen').style.display = 'block';
 				
-				// Pausar música del menú al iniciar juego
-				menuMusic.pause();
+				// NO pausar música del menú - mantener continuidad
+				// menuMusic.pause(); // Comentado para continuidad
 				
 				if (!gameStarted) {
 					// Cargar mundo medieval mejorado
@@ -310,8 +348,8 @@
 				document.getElementById('mainMenu').style.display = 'block';
 				document.getElementById('backgroundVideo').style.display = 'block';
 				
-				// Reanudar música del menú al volver
-				startMenuMusic();
+				// NO reanudar música del menú - mantener continuidad
+				// startMenuMusic(); // Comentado para continuidad
 				
 				if (animationId) {
 					cancelAnimationFrame(animationId);
