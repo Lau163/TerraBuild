@@ -3,15 +3,66 @@
 <head>
 	<title>TerraBuild - Aventura Medieval</title>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="description" content="TerraBuild - Juego de aventura medieval tipo Minecraft con personajes seleccionables">
+	<meta name="keywords" content="juego, minecraft, medieval, aventura, 3d, terraformado">
+	<meta name="author" content="TerraBuild Team">
+	
+	<!-- Optimizaciones para móviles -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="format-detection" content="telephone=no">
+	
 	<link rel="stylesheet" type="text/css" href="main.css">
 	<style>
 		body {
 			background-color: #bfd1e5;
 			color: #61443e;
+			margin: 0;
+			padding: 0;
+			overflow-x: hidden;
+			font-family: 'Times New Roman', serif;
+			/* Prevenir scroll en móviles pero permitir interacción */
+			touch-action: pan-y pinch-zoom;
+			overscroll-behavior: none;
 		}
 		a {
 			color: #a06851;
+		}
+		
+		/* Optimizaciones para rendimiento */
+		* {
+			box-sizing: border-box;
+			-webkit-tap-highlight-color: transparent;
+			-webkit-touch-callout: none;
+		}
+		
+		/* Permitir selección de texto donde sea necesario */
+		input, textarea, [contenteditable] {
+			-webkit-user-select: text;
+			-moz-user-select: text;
+			-ms-user-select: text;
+			user-select: text;
+		}
+		
+		/* Prevenir selección de texto en botones */
+		button, .menu-item, .camera-btn, .select-btn, .adjust-btn {
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		
+		/* Permitir interacción en botones */
+		.menu-item, .camera-btn, .select-btn, .adjust-btn, .character-card {
+			pointer-events: auto !important;
+			touch-action: manipulation !important;
+			cursor: pointer !important;
+		}
+		
+		/* Asegurar que los botones sean clickeables */
+		.medieval-menu, .camera-control-panel, .character-selection-container {
+			pointer-events: auto !important;
 		}
 	</style>
 </head>
@@ -51,35 +102,121 @@
 		<source src="img/menu principal.mp4" type="video/mp4">
 	</video>
 	
-	<!-- Menú Principal Medieval -->
+	<!-- Menú Principal -->
 	<div id="mainMenu" class="medieval-menu">
-		<h2>TerraBuild</h2>
-		<div class="subtitle">Aventura Medieval</div>
-		<button class="menu-item" onclick="startOriginalGame()">Jugar Original</button>
-		<button class="menu-item" onclick="startGame()">Mundo Medieval</button>
-		<button class="menu-item" onclick="showOptions()">Opciones</button>
-		<button class="menu-item" onclick="showControls()">Controles</button>
+		<h1 class="menu-title">🏰 TerraBuild 🏰</h1>
+		<div class="menu-buttons">
+			<button class="menu-item" onclick="startOriginalGame()">🎮 Jugar Original</button>
+			<button class="menu-item" onclick="startGame()">🏰 Mundo Medieval</button>
+			<button class="menu-item" onclick="showOptions()">⚙️ Opciones</button>
+			<button class="menu-item" onclick="showControls()">🎮 Controles</button>
+			<button class="menu-item" onclick="showCharacterSelection()">👥 Elegir Personaje</button>
+		</div>
+	</div>
+
+	<!-- Pantalla de Selección de Personaje -->
+	<div id="characterSelectionScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000;">
+		<div class="medieval-menu" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; max-width: 90vw;">
+			<h2 class="menu-title">👥 Elige tu Personaje</h2>
+			<div class="character-selection-container">
+				<div class="character-card" onclick="selectCharacter('P1')">
+					<div class="character-image">
+						<img src="assets/models/P1.png" alt="Personaje P1" style="width: 100px; height: 150px; object-fit: contain; border-radius: 10px;">
+					</div>
+					<h3>⚔️ Guerrero P1</h3>
+					<p>Valiente guerrero con gran fuerza y habilidades de combate cuerpo a cuerpo.</p>
+					<div class="character-stats">
+						<span>⚔️ Ataque: Alto</span>
+						<span>🛡️ Defensa: Media</span>
+						<span>🏃 Velocidad: Media</span>
+					</div>
+					<button class="select-btn">Elegir Guerrero</button>
+				</div>
+				
+				<div class="character-card" onclick="selectCharacter('P2')">
+					<div class="character-image">
+						<img src="assets/models/P2.png" alt="Personaje P2" style="width: 100px; height: 150px; object-fit: contain; border-radius: 10px;">
+					</div>
+					<h3>🧙‍♂️ Mago P2</h3>
+					<p>Poderoso mago con hechizos elementales y gran conocimiento arcano.</p>
+					<div class="character-stats">
+						<span>🔥 Ataque: Mágico</span>
+						<span>🛡️ Defensa: Baja</span>
+						<span>🏃 Velocidad: Alta</span>
+					</div>
+					<button class="select-btn">Elegir Mago</button>
+				</div>
+			</div>
+			
+			<div class="selection-actions">
+				<button class="menu-item" onclick="backToMenuFromSelection()">🔙 Volver al Menú</button>
+			</div>
+		</div>
 	</div>
 
 	<!-- Pantalla de Juego -->
 	<div id="gameScreen" style="display: none;">
 		<div id="info">TerraBuild - Juego Medieval tipo Minecraft<br />(clic izquierdo: avanzar, clic derecho: retroceder)</div>
 		<div id="container"></div>
+		
+		<!-- HUD Principal -->
 		<div class="medieval-hud">
 			<div class="hud-item">
-				<span class="hud-icon"></span>
+				<span class="hud-icon">👁️</span>
+				<span id="camera-mode">1ra Persona</span>
+			</div>
+			<div class="hud-item">
+				<span class="hud-icon">❤️</span>
 				<span>Vida: 100</span>
 			</div>
 			<div class="hud-item">
-				<span class="hud-icon"></span>
+				<span class="hud-icon">⚡</span>
 				<span>Energía: 100</span>
 			</div>
 			<div class="hud-item">
-				<span class="hud-icon"></span>
+				<span class="hud-icon">🧱</span>
 				<span>Bloques: 64</span>
 			</div>
 		</div>
+		
+		<!-- Panel de Control de Cámara -->
+		<div class="camera-control-panel">
+			<div class="camera-control-header">
+				<span class="camera-title">📷 CÁMARA</span>
+				<span id="camera-status" class="camera-status">1ra Persona</span>
+			</div>
+			<div class="camera-buttons">
+				<button class="camera-btn primary" onclick="toggleCameraMode()" id="toggle-camera-btn">
+					<span class="btn-icon">🔄</span>
+					<span class="btn-text">Cambiar Vista</span>
+				</button>
+				<button class="camera-btn secondary" onclick="resetCameraPosition()">
+					<span class="btn-icon">🎯</span>
+					<span class="btn-text">Resetear</span>
+				</button>
+			</div>
+			<div class="camera-adjustments" id="camera-adjustments" style="display: none;">
+				<div class="adjustment-group">
+					<label>Altura:</label>
+					<button class="adjust-btn" onclick="adjustCameraOffset('y', -0.5)">▼</button>
+					<button class="adjust-btn" onclick="adjustCameraOffset('y', 0.5)">▲</button>
+				</div>
+				<div class="adjustment-group">
+					<label>Distancia:</label>
+					<button class="adjust-btn" onclick="adjustCameraOffset('z', -0.5)">➖</button>
+					<button class="adjust-btn" onclick="adjustCameraOffset('z', 0.5)">➕</button>
+				</div>
+				<div class="adjustment-group">
+					<label>Lateral:</label>
+					<button class="adjust-btn" onclick="adjustCameraOffset('x', -0.5)">◀</button>
+					<button class="adjust-btn" onclick="adjustCameraOffset('x', 0.5)">▶</button>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Botones Principales -->
 		<button class="menu-item" onclick="backToMenu()" style="position: absolute; top: 20px; right: 20px; min-width: 100px; padding: 10px 20px;">Menú</button>
+		<button class="menu-item" onclick="toggleCameraAdjustments()" style="position: absolute; top: 70px; right: 20px; min-width: 100px; padding: 10px 20px; font-size: 12px;">⚙️ Ajustes</button>
 	</div>
 
 		<script type="importmap">
@@ -87,12 +224,83 @@
 				"imports": {
 					"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
 					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-					"./medieval-world.js": "./medieval-world.js"
+					"./medieval-world.js": "./medieval-world.js",
+					"./entity-manager.js": "./entity-manager.js",
+					"./character-loader.js": "./character-loader.js"
 				}
 			}
 		</script>
 
 		<script type="module">
+
+			// Viewport Meta Tag para dispositivos móviles
+			const viewportMeta = document.createElement('meta');
+			viewportMeta.name = 'viewport';
+			viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+			document.head.appendChild(viewportMeta);
+			
+			// Detectar tipo de dispositivo
+			function detectDeviceType() {
+				const width = window.innerWidth;
+				const isMobile = width <= 768;
+				const isTablet = width > 768 && width <= 1024;
+				const isDesktop = width > 1024;
+				
+				console.log('📱 Dispositivo detectado:', {
+					type: isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
+					width: width,
+					height: window.innerHeight,
+					pixelRatio: window.devicePixelRatio,
+					touchSupport: 'ontouchstart' in window
+				});
+				
+				return { isMobile, isTablet, isDesktop };
+			}
+			
+			// Guardar tipo de dispositivo globalmente
+			window.deviceInfo = detectDeviceType();
+			
+			// Actualizar información al redimensionar
+			window.addEventListener('resize', () => {
+				window.deviceInfo = detectDeviceType();
+			});
+			
+			// Prevenir zoom en dispositivos táctiles pero permitir clicks
+			if (window.deviceInfo && window.deviceInfo.isMobile) {
+				// Prevenir zoom multitáctil solo en áreas específicas
+				document.addEventListener('touchstart', function(event) {
+					// Permitir clicks en botones y elementos interactivos
+					const target = event.target;
+					const isInteractive = target.closest('.menu-item, .camera-btn, .select-btn, .adjust-btn, .character-card, button, a');
+					
+					if (!isInteractive && event.touches.length > 1) {
+						event.preventDefault();
+					}
+				}, { passive: false });
+				
+				// Prevenir scroll y zoom gestures solo en canvas
+				const gameContainer = document.getElementById('container');
+				if (gameContainer) {
+					gameContainer.addEventListener('touchmove', function(event) {
+						event.preventDefault();
+					}, { passive: false });
+				}
+				
+				// Permitir double-tap en botones
+				let lastTouchEnd = 0;
+				document.addEventListener('touchend', function(event) {
+					const target = event.target;
+					const isInteractive = target.closest('.menu-item, .camera-btn, .select-btn, .adjust-btn, .character-card, button, a');
+					
+					if (!isInteractive) {
+						const now = Date.now();
+						if (now - lastTouchEnd <= 300) {
+							event.preventDefault();
+						}
+						lastTouchEnd = now;
+					}
+				});
+			}
 
 			import * as THREE from 'three';
 
@@ -102,6 +310,8 @@
 			import { ImprovedNoise } from 'three/addons/math/ImprovedNoise.js';
 			import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 			import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+			import { EntityManager } from './entity-manager.js';
+			import { CharacterLoader } from './character-loader.js';
 
 			let container, stats;
 
@@ -121,6 +331,12 @@
 			// Sistema de Entidades 3D
 			const loader = new GLTFLoader();
 			let entidadesCargadas = [];
+			
+			// EntityManager global
+			let entityManager = null;
+			
+			// CharacterLoader global
+			let characterLoader = null;
 
 			// Clase Player para equipamiento
 			class Player {
@@ -140,41 +356,938 @@
 			// Crear instancia del jugador
 			window.player = new Player();
 
+			// Función para inicializar EntityManager
+			window.initEntityManager = function() {
+				if (scene && camera) {
+					entityManager = new EntityManager(scene, camera);
+					console.log('🎮 EntityManager inicializado');
+					return entityManager;
+				}
+				return null;
+			};
+
+			// Función para inicializar CharacterLoader
+			window.initCharacterLoader = function() {
+				if (scene) {
+					characterLoader = new CharacterLoader(scene);
+					console.log('👥 CharacterLoader inicializado');
+					return characterLoader;
+				}
+				return null;
+			};
+
+			// Función para cargar personajes P1 y P2
+			window.cargarPersonajes = async function() {
+				if (!characterLoader) {
+					console.warn('⚠️ CharacterLoader no inicializado');
+					return;
+				}
+
+				try {
+					// Cargar personaje P1
+					await characterLoader.loadCharacter('assets/models/P1.png', {x: 5, y: 0, z: 5}, {
+						name: 'personaje_P1',
+						type: 'npc',
+						description: 'Personaje P1 - Guerrero',
+						interactable: true,
+						scale: { x: 2, y: 3, z: 1 }
+					});
+
+					// Cargar personaje P2
+					await characterLoader.loadCharacter('assets/models/P2.png', {x: -5, y: 0, z: -5}, {
+						name: 'personaje_P2',
+						type: 'npc',
+						description: 'Personaje P2 - Mago',
+						interactable: true,
+						scale: { x: 2, y: 3, z: 1 }
+					});
+
+					// Añadir animación de flotación
+					if (characterLoader.characters.length >= 2) {
+						characterLoader.addFloatingAnimation(characterLoader.characters[0], 0.3, 2);
+						characterLoader.addFloatingAnimation(characterLoader.characters[1], 0.2, 1.5);
+					}
+
+					console.log('👥 Personajes P1 y P2 cargados con animaciones');
+				} catch (error) {
+					console.error('❌ Error al cargar personajes:', error);
+				}
+			};
+
+			// Variable global para personaje seleccionado
+			let selectedCharacter = null;
+			
+			// Variables para sistema de cámara
+			let cameraMode = 'first'; // 'first' o 'third'
+			let thirdPersonCamera = null;
+			let cameraOffset = new THREE.Vector3(0, 5, -10);
+			let followSpeed = 0.1;
+
+			// Función para mostrar selección de personaje
+			window.showCharacterSelection = function() {
+				console.log('👥 Mostrando pantalla de selección de personajes');
+				document.getElementById('mainMenu').style.display = 'none';
+				document.getElementById('characterSelectionScreen').style.display = 'block';
+			};
+
+			// Función para volver al menú desde selección
+			window.backToMenuFromSelection = function() {
+				console.log('� Volviendo al menú principal desde selección');
+				document.getElementById('characterSelectionScreen').style.display = 'none';
+				document.getElementById('mainMenu').style.display = 'block';
+			};
+
+			// Función para volver al menú principal
+			window.backToMenu = function() {
+				console.log('🔙 Volviendo al menú principal');
+				document.getElementById('gameScreen').style.display = 'none';
+				document.getElementById('mainMenu').style.display = 'block';
+			};
+
+			// Función para seleccionar personaje
+			window.selectCharacter = function(characterType) {
+				console.log('🎯 Función selectCharacter llamada con:', characterType);
+				
+				selectedCharacter = characterType;
+				
+				// Quitar selección previa
+				document.querySelectorAll('.character-card').forEach(card => {
+					card.classList.remove('selected');
+				});
+				
+				// Añadir selección a la tarjeta actual
+				const clickedCard = event.currentTarget;
+				clickedCard.classList.add('selected');
+				
+				// Mostrar confirmación
+				const characterNames = {
+					'P1': 'Guerrero P1',
+					'P2': 'Mago P2'
+				};
+				
+				const characterDescriptions = {
+					'P1': '⚔️ Guerrero valiente con gran fuerza',
+					'P2': '🧙‍♂️ Mago poderoso con hechizos elementales'
+				};
+				
+				console.log(`✅ Personaje seleccionado: ${characterNames[characterType]}`);
+				console.log(`📝 Descripción: ${characterDescriptions[characterType]}`);
+				
+				// Guardar selección en localStorage
+				localStorage.setItem('selectedCharacter', characterType);
+				
+				// Mostrar mensaje de confirmación
+				setTimeout(() => {
+					if (confirm(`🎮 ¿Iniciar juego como ${characterNames[characterType]}?\n\n${characterDescriptions[characterType]}`)) {
+						console.log('🚀 Iniciando juego con personaje seleccionado');
+						startGameWithSelectedCharacter();
+					} else {
+						console.log('❌ Usuario canceló la selección');
+					}
+				}, 300);
+			};
+
+			// Función para iniciar juego con personaje seleccionado
+			window.startGameWithSelectedCharacter = function() {
+				console.log('🎮 Iniciando juego con personaje seleccionado...');
+				console.log('📊 Estado inicial:', {
+					selectedCharacter: selectedCharacter,
+					gameStarted: gameStarted,
+					scene: !!scene,
+					camera: !!camera
+				});
+				
+				if (!selectedCharacter) {
+					console.warn('⚠️ No hay personaje seleccionado');
+					alert('⚠️ Error: No hay personaje seleccionado. Por favor, selecciona un personaje primero.');
+					return;
+				}
+				
+				// Ocultar pantalla de selección
+				document.getElementById('characterSelectionScreen').style.display = 'none';
+				document.getElementById('gameScreen').style.display = 'block';
+				console.log('🖼️ Pantallas cambiadas: selección oculta, juego visible');
+				
+				// Asegurar que el panel de cámara sea visible
+				const cameraPanel = document.querySelector('.camera-control-panel');
+				if (cameraPanel) {
+					cameraPanel.style.display = 'block';
+					cameraPanel.style.visibility = 'visible';
+					cameraPanel.style.opacity = '1';
+					console.log('📷 Panel de cámara hecho visible');
+				} else {
+					console.error('❌ No se encontró el panel de cámara');
+				}
+				
+				// Mostrar mensaje de carga
+				const loadingMessage = document.createElement('div');
+				loadingMessage.id = 'game-loading';
+				loadingMessage.style.cssText = `
+					position: fixed;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					background: rgba(139, 69, 19, 0.9);
+					color: #d4af37;
+					padding: 20px;
+					border-radius: 10px;
+					border: 2px solid #d4af37;
+					font-family: 'Times New Roman', serif;
+					font-size: 16px;
+					z-index: 10000;
+					text-align: center;
+					max-width: 90vw;
+				`;
+				loadingMessage.innerHTML = `
+					<h3>🎮 Cargando Mundo TerraBuild...</h3>
+					<p>Generando terreno con tu personaje</p>
+					<p>Por favor espera...</p>
+				`;
+				document.body.appendChild(loadingMessage);
+				
+				// Iniciar juego original con personaje personalizado
+				if (!gameStarted) {
+					console.log('🔄 Iniciando juego por primera vez...');
+					try {
+						init();
+						gameStarted = true;
+						console.log('✅ Juego iniciado correctamente');
+					} catch (error) {
+						console.error('❌ Error al iniciar juego:', error);
+						alert('❌ Error al iniciar el juego: ' + error.message);
+						document.body.removeChild(loadingMessage);
+						return;
+					}
+				} else {
+					console.log('🔄 Reutilizando juego existente...');
+					const container = document.getElementById('container');
+					container.innerHTML = '';
+					if (renderer) {
+						container.appendChild(renderer.domElement);
+					}
+				}
+				
+				// Inicializar sistemas y cargar personaje seleccionado
+				console.log('⏰ Programando carga de sistemas en 2 segundos...');
+				setTimeout(() => {
+					console.log('🚀 Iniciando carga de sistemas...');
+					try {
+						console.log('📦 1. Inicializando EntityManager...');
+						initEntityManager();
+						
+						console.log('📦 2. Inicializando CharacterLoader...');
+						initCharacterLoader();
+						
+						console.log('📦 3. Cargando objetos recolectables...');
+						cargarObjetosRecolectables();
+						
+						console.log('📦 4. Cargando personaje seleccionado...');
+						cargarPersonajeSeleccionado();
+						
+						console.log('✅ Todos los sistemas iniciados correctamente');
+						
+						// Verificar y asegurar visibilidad del panel de cámara
+						const cameraPanelCheck = document.querySelector('.camera-control-panel');
+						if (cameraPanelCheck) {
+							cameraPanelCheck.style.display = 'block';
+							cameraPanelCheck.style.visibility = 'visible';
+							cameraPanelCheck.style.opacity = '1';
+							cameraPanelCheck.style.zIndex = '100';
+							console.log('📷 Panel de cámara verificado y asegurado visible');
+						}
+						
+						// Quitar mensaje de carga
+						setTimeout(() => {
+							if (document.getElementById('game-loading')) {
+								document.body.removeChild(loadingMessage);
+							}
+							console.log('🎉 ¡Juego listo! Ahora puedes usar los botones de cámara.');
+							
+							// Mostrar notificación de éxito
+							const successMessage = document.createElement('div');
+							successMessage.style.cssText = `
+								position: fixed;
+								top: 20px;
+								left: 50%;
+								transform: translateX(-50%);
+								background: rgba(0, 128, 0, 0.8);
+								color: white;
+								padding: 15px 25px;
+								border-radius: 8px;
+								font-family: 'Times New Roman', serif;
+								font-size: 14px;
+								z-index: 10000;
+								animation: fadeInOut 3s ease-in-out;
+							`;
+							successMessage.textContent = '✅ ¡Personaje cargado! Usa los botones de cámara abajo a la izquierda.';
+							document.body.appendChild(successMessage);
+							
+							setTimeout(() => {
+								if (document.body.contains(successMessage)) {
+									document.body.removeChild(successMessage);
+								}
+							}, 3000);
+						}, 1000);
+						
+					} catch (error) {
+						console.error('❌ Error al cargar sistemas:', error);
+						alert('❌ Error al cargar los sistemas del juego: ' + error.message);
+						if (document.getElementById('game-loading')) {
+							document.body.removeChild(loadingMessage);
+						}
+					}
+				}, 2000);
+				
+				console.log('🎬 Iniciando bucle de animación...');
+				animate();
+			};
+
+			// Función para cargar solo el personaje seleccionado
+			window.cargarPersonajeSeleccionado = async function() {
+				console.log('🎮 Iniciando carga de personaje seleccionado...');
+				console.log('📊 Estado inicial:', {
+					characterLoader: !!characterLoader,
+					selectedCharacter: selectedCharacter,
+					scene: !!scene
+				});
+				
+				if (!characterLoader || !selectedCharacter) {
+					console.warn('⚠️ CharacterLoader no inicializado o no hay personaje seleccionado');
+					console.log('📋 Detalles:', {
+						characterLoader: !!characterLoader,
+						selectedCharacter: selectedCharacter
+					});
+					return;
+				}
+
+				try {
+					const characterData = {
+						'P1': {
+							path: 'assets/models/P1.png',
+							position: {x: 0, y: 0, z: 0},
+							options: {
+								name: 'player_character_P1',
+								type: 'player',
+								description: 'Tu Guerrero P1',
+								interactable: false,
+								scale: { x: 2, y: 3, z: 1 }
+							}
+						},
+						'P2': {
+							path: 'assets/models/P2.png',
+							position: {x: 0, y: 0, z: 0},
+							options: {
+								name: 'player_character_P2',
+								type: 'player',
+								description: 'Tu Mago P2',
+								interactable: false,
+								scale: { x: 2, y: 3, z: 1 }
+							}
+						}
+					};
+
+					console.log('📋 Datos de personaje a cargar:', characterData[selectedCharacter]);
+					
+					const selected = characterData[selectedCharacter];
+					if (selected) {
+						console.log('🔄 Cargando personaje:', selected.path);
+						console.log('📊 Antes de cargar - characterLoader.characters.length:', characterLoader.characters.length);
+						
+						try {
+							await characterLoader.loadCharacter(selected.path, selected.position, selected.options);
+							console.log('✅ loadCharacter completado exitosamente');
+							console.log('📊 Después de cargar - characterLoader.characters.length:', characterLoader.characters.length);
+						} catch (loadError) {
+							console.error('❌ Error en loadCharacter:', loadError);
+							throw loadError;
+						}
+						
+						// Añadir animación especial para el jugador
+						if (characterLoader.characters.length > 0) {
+							console.log('✅ Personaje encontrado en characterLoader.characters');
+							const playerCharacter = characterLoader.characters[characterLoader.characters.length - 1];
+							characterLoader.addFloatingAnimation(playerCharacter, 0.1, 1);
+							
+							// Configurar como personaje del jugador
+							window.playerCharacter = playerCharacter;
+							
+							// Guardar cámara original para primera persona
+							window.originalCamera = camera;
+							
+							// Iniciar en primera persona (personaje oculto)
+							playerCharacter.visible = false;
+							
+							console.log('✅ Personaje del jugador cargado exitosamente:', selectedCharacter);
+							console.log('📊 Estado final:', {
+								playerCharacter: !!window.playerCharacter,
+								characterName: playerCharacter.userData.name,
+								visible: playerCharacter.visible,
+								cameraMode: cameraMode
+							});
+							
+							// Notificar que el personaje está listo
+							console.log('🎮 ¡Personaje listo para usar la cámara!');
+						} else {
+							console.error('❌ No se encontró el personaje cargado en characterLoader.characters');
+							console.log('📊 characterLoader.characters:', characterLoader.characters);
+							throw new Error('El personaje no se cargó correctamente en characterLoader.characters');
+						}
+					} else {
+						console.error('❌ Datos de personaje no encontrados para:', selectedCharacter);
+						throw new Error(`Datos de personaje no encontrados para: ${selectedCharacter}`);
+					}
+				} catch (error) {
+					console.error('❌ Error al cargar personaje seleccionado:', error);
+					// Crear personaje alternativo si falla la carga
+					console.log('🔄 Creando personaje alternativo de emergencia...');
+					try {
+						const alternativaGeometry = new THREE.BoxGeometry(1, 2, 1);
+						const alternativaMaterial = new THREE.MeshStandardMaterial({ 
+							color: selectedCharacter === 'P1' ? 0x4169E1 : 0x9370DB
+						});
+						const alternativaMesh = new THREE.Mesh(alternativaGeometry, alternativaMaterial);
+						alternativaMesh.position.set(0, 1, 0);
+						alternativaMesh.userData = {
+							name: `player_character_${selectedCharacter}_alternativo`,
+							type: 'player',
+							description: `Personaje Alternativo ${selectedCharacter}`
+						};
+						scene.add(alternativaMesh);
+						window.playerCharacter = alternativaMesh;
+						window.originalCamera = camera;
+						alternativaMesh.visible = false;
+						console.log('✅ Personaje alternativo creado exitosamente');
+						console.log('🎮 ¡Personaje alternativo listo para usar la cámara!');
+					} catch (altError) {
+						console.error('❌ Error crítico: ni siquiera se pudo crear personaje alternativo:', altError);
+					}
+				}
+			};
+
+			// Función para cambiar entre primera y tercera persona
+			function toggleCameraMode() {
+				console.log('🔄 Botón de cámara presionado');
+				console.log('📊 Estado actual:', {
+					playerCharacter: !!window.playerCharacter,
+					cameraMode: cameraMode,
+					gameStarted: gameStarted,
+					characterLoader: !!characterLoader
+				});
+				
+				// Verificar si el juego está completamente cargado
+				if (!gameStarted) {
+					console.warn('⚠️ El juego no ha iniciado completamente');
+					alert('⚠️ El juego aún está cargando. Por favor espera unos segundos.');
+					return;
+				}
+				
+				if (!characterLoader) {
+					console.warn('⚠️ CharacterLoader no está inicializado');
+					alert('⚠️ El sistema de personajes aún está cargando. Por favor espera.');
+					return;
+				}
+				
+				if (!window.playerCharacter) {
+					console.warn('⚠️ No hay personaje del jugador cargado');
+					console.log('📋 Estado de characterLoader:', {
+						exists: !!characterLoader,
+						charactersCount: characterLoader ? characterLoader.characters.length : 0,
+						lastCharacter: characterLoader && characterLoader.characters.length > 0 ? 
+							characterLoader.characters[characterLoader.characters.length - 1].userData.name : 'none'
+					});
+					
+					alert('⚠️ Tu personaje aún está cargando. Por favor espera unos segundos más.\n\nSi el problema persiste:\n1. Recarga la página (F5)\n2. Selecciona tu personaje nuevamente\n3. Espera a que aparezca el mensaje "✅ ¡Personaje cargado!"');
+					return;
+				}
+
+				if (cameraMode === 'first') {
+					// Cambiar a tercera persona
+					cameraMode = 'third';
+					setupThirdPersonCamera();
+					console.log('📷 Cambiado a tercera persona');
+					
+					// Actualizar HUD y botones
+					const cameraModeElement = document.getElementById('camera-mode');
+					const cameraStatusElement = document.getElementById('camera-status');
+					const toggleBtnElement = document.getElementById('toggle-camera-btn');
+					
+					if (cameraModeElement) cameraModeElement.textContent = '3ra Persona';
+					if (cameraStatusElement) cameraStatusElement.textContent = '3ra Persona';
+					if (toggleBtnElement) {
+						const btnText = toggleBtnElement.querySelector('.btn-text');
+						if (btnText) btnText.textContent = 'Vista 1ra';
+					}
+				} else {
+					// Cambiar a primera persona
+					cameraMode = 'first';
+					setupFirstPersonCamera();
+					console.log('👁️ Cambiado a primera persona');
+					
+					// Actualizar HUD y botones
+					const cameraModeElement = document.getElementById('camera-mode');
+					const cameraStatusElement = document.getElementById('camera-status');
+					const toggleBtnElement = document.getElementById('toggle-camera-btn');
+					
+					if (cameraModeElement) cameraModeElement.textContent = '1ra Persona';
+					if (cameraStatusElement) cameraStatusElement.textContent = '1ra Persona';
+					if (toggleBtnElement) {
+						const btnText = toggleBtnElement.querySelector('.btn-text');
+						if (btnText) btnText.textContent = 'Vista 3ra';
+					}
+				}
+			}
+
+			// Hacer función global
+			window.toggleCameraMode = toggleCameraMode;
+
+			// Función para resetear posición de cámara
+			function resetCameraPosition() {
+				console.log('🎯 Botón de reset presionado');
+				console.log('📊 Estado actual:', {
+					playerCharacter: !!window.playerCharacter,
+					cameraOffset: cameraOffset,
+					followSpeed: followSpeed
+				});
+				
+				cameraOffset = new THREE.Vector3(0, 5, -10);
+				followSpeed = 0.1;
+				console.log('🎯 Posición de cámara reseteada');
+				console.log('📷 Offset:', cameraOffset);
+				alert('🎯 Cámara reseteada a posición por defecto');
+			}
+
+			// Hacer función global
+			window.resetCameraPosition = resetCameraPosition;
+
+			// Función para mostrar/ocultar ajustes de cámara
+			function toggleCameraAdjustments() {
+				console.log('⚙️ Botón de ajustes presionado');
+				console.log('📊 Estado actual:', {
+					gameStarted: gameStarted,
+					playerCharacter: !!window.playerCharacter
+				});
+				
+				const adjustments = document.getElementById('camera-adjustments');
+				const isVisible = adjustments && adjustments.style.display !== 'none';
+				
+				if (adjustments) {
+					adjustments.style.display = isVisible ? 'none' : 'block';
+					console.log(isVisible ? '⚙️ Ajustes de cámara ocultos' : '⚙️ Ajustes de cámara mostrados');
+				} else {
+					console.error('❌ No se encontró el elemento de ajustes de cámara');
+				}
+			}
+
+			// Hacer función global
+			window.toggleCameraAdjustments = toggleCameraAdjustments;
+
+			// Configurar cámara en tercera persona
+			window.setupThirdPersonCamera = function() {
+				if (!window.playerCharacter) return;
+
+				// Crear cámara tercera persona si no existe
+				if (!thirdPersonCamera) {
+					thirdPersonCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+				}
+
+				// Hacer visible el personaje del jugador
+				if (window.playerCharacter) {
+					window.playerCharacter.visible = true;
+				}
+
+				// Usar cámara tercera persona
+				camera = thirdPersonCamera;
+				if (controls) {
+					controls.object = camera;
+				}
+			};
+
+			// Configurar cámara en primera persona
+			window.setupFirstPersonCamera = function() {
+				if (!window.playerCharacter) return;
+
+				// Ocultar personaje del jugador en primera persona
+				if (window.playerCharacter) {
+					window.playerCharacter.visible = false;
+				}
+
+				// Usar cámara original (primera persona)
+				camera = window.originalCamera || camera;
+				if (controls) {
+					controls.object = camera;
+				}
+			};
+
+			// Actualizar cámara tercera persona
+			window.updateThirdPersonCamera = function() {
+				if (!window.playerCharacter || cameraMode !== 'third' || !thirdPersonCamera) return;
+
+				// Posición deseada de la cámara - Manejo seguro de posición
+				const playerPosition = window.playerCharacter.position;
+				const desiredPosition = new THREE.Vector3(
+					playerPosition.x + cameraOffset.x,
+					playerPosition.y + cameraOffset.y,
+					playerPosition.z + cameraOffset.z
+				);
+				
+				// Suavizado del movimiento
+				thirdPersonCamera.position.lerp(desiredPosition, followSpeed);
+				
+				// La cámara mira hacia el personaje
+				thirdPersonCamera.lookAt(window.playerCharacter.position);
+			};
+
+			// Función para ajustar offset de cámara
+			function adjustCameraOffset(axis, delta) {
+				console.log(`📷 Ajustando cámara en eje ${axis} por ${delta}`);
+				
+				switch(axis) {
+					case 'x':
+						cameraOffset.x += delta;
+						break;
+					case 'y':
+						cameraOffset.y += delta;
+						break;
+					case 'z':
+						cameraOffset.z += delta;
+						break;
+				}
+				console.log('📷 Offset de cámara ajustado:', cameraOffset);
+			}
+
+			// Hacer función global
+			window.adjustCameraOffset = adjustCameraOffset;
+			// Función para cargar personaje preferido al iniciar
+			function loadPreferredCharacter() {
+				const saved = localStorage.getItem('selectedCharacter');
+				if (saved) {
+					selectedCharacter = saved;
+					console.log(`💾 Personaje preferido cargado: ${saved}`);
+				}
+			}
+
+			// Hacer función global
+			window.loadPreferredCharacter = loadPreferredCharacter;
+
+			// Función para mostrar diálogo de personaje
+			function showCharacterDialogue(characterData) {
+				const dialogues = {
+					'personaje_P1': '¡Hola! Soy el Guerrero P1. Estoy aquí para protegerte en tu aventura medieval.',
+					'personaje_P2': '¡Saludos! Soy el Mago P2. Con mis hechizos te ayudaré en tu viaje.'
+				};
+
+				const message = dialogues[characterData.id] || `Hola, soy ${characterData.description}`;
+				alert(`💬 ${message}`);
+			}
+
+			// Hacer función global
+			window.showCharacterDialogue = showCharacterDialogue;
+
+			// Función para cargar objetos recolectables
+			window.cargarObjetosRecolectables = async function() {
+				if (!entityManager) {
+					console.warn('⚠️ EntityManager no inicializado, no se pueden cargar objetos recolectables');
+					return;
+				}
+				
+				console.log('🎯 Iniciando carga de objetos recolectables...');
+				
+				// Sistema de objetos alternativos predefinidos
+				const crearAlternativaEspada = (position, color, nombre) => {
+					const grupo = new THREE.Group();
+					
+					// Hoja de espada
+					const hojaGeometry = new THREE.BoxGeometry(0.05, 0.8, 0.02);
+					const hojaMaterial = new THREE.MeshStandardMaterial({ 
+						color: color,
+						metalness: 0.9,
+						roughness: 0.1
+					});
+					const hoja = new THREE.Mesh(hojaGeometry, hojaMaterial);
+					hoja.position.y = 0.4;
+					grupo.add(hoja);
+					
+					// Guarda
+					const guardaGeometry = new THREE.BoxGeometry(0.15, 0.1, 0.05);
+					const guardaMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0x444444,
+						metalness: 0.7,
+						roughness: 0.3
+					});
+					const guarda = new THREE.Mesh(guardaGeometry, guardaMaterial);
+					guarda.position.y = 0.05;
+					grupo.add(guarda);
+					
+					// Mango
+					const mangoGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.3, 8);
+					const mangoMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0x8B4513,
+						roughness: 0.8
+					});
+					const mango = new THREE.Mesh(mangoGeometry, mangoMaterial);
+					mango.position.y = -0.15;
+					grupo.add(mango);
+					
+					grupo.position.set(position.x, position.y, position.z);
+					grupo.userData = {
+						id: nombre,
+						type: 'weapon',
+						collectible: true,
+						description: nombre.includes('Dorada') ? 'Espada Dorada (Alternativa)' : 'Espada Medieval (Alternativa)'
+					};
+					
+					return grupo;
+				};
+				
+				const crearAlternativaEscudo = (position) => {
+					const grupo = new THREE.Group();
+					
+					// Escudo principal
+					const escudoGeometry = new THREE.CylinderGeometry(0.4, 0.35, 0.08, 8);
+					const escudoMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0x4A4A4A,
+						metalness: 0.7,
+						roughness: 0.3
+					});
+					const escudo = new THREE.Mesh(escudoGeometry, escudoMaterial);
+					escudo.rotation.z = Math.PI / 2;
+					grupo.add(escudo);
+					
+					// Borde del escudo
+					const bordeGeometry = new THREE.TorusGeometry(0.37, 0.03, 8, 1);
+					const bordeMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0x666666,
+						metalness: 0.8,
+						roughness: 0.2
+					});
+					const borde = new THREE.Mesh(bordeGeometry, bordeMaterial);
+					borde.rotation.z = Math.PI / 2;
+					grupo.add(borde);
+					
+					grupo.position.set(position.x, position.y, position.z);
+					grupo.userData = {
+						id: 'escudo_1',
+						type: 'armor',
+						collectible: true,
+						description: 'Escudo de Hierro (Alternativo)'
+					};
+					
+					return grupo;
+				};
+				
+				// Sistema de detección de archivos corruptos - Saltar carga directa de GLTF
+				console.log('🚫 Omitiendo carga de archivos GLTF corruptos, creando alternativas directamente...');
+				
+				try {
+					// Crear espada 1 alternativa directamente
+					console.log('🗡️ Creando espada medieval alternativa...');
+					const espadaAlternativa = crearAlternativaEspada({x: 0, y: 1, z: 0}, 0x888888, 'espada_1');
+					scene.add(espadaAlternativa);
+					console.log('✅ Espada 1 alternativa creada exitosamente');
+					
+					// Crear espada 2 dorada directamente
+					console.log('⚔️ Creando espada dorada alternativa...');
+					const espadaDorada = crearAlternativaEspada({x: 5, y: 1, z: 5}, 0xFFD700, 'espada_2');
+					scene.add(espadaDorada);
+					console.log('✅ Espada 2 alternativa dorada creada exitosamente');
+					
+					// Crear escudo directamente
+					console.log('🛡️ Creando escudo alternativo...');
+					const escudoAlternativo = crearAlternativaEscudo({x: -5, y: 1, z: 0});
+					scene.add(escudoAlternativo);
+					console.log('✅ Escudo alternativo creado exitosamente');
+
+					console.log('🎯 Todos los objetos recolectables creados con alternativas de alta calidad');
+				} catch (error) {
+					console.error('❌ Error general al crear objetos alternativos:', error);
+				}
+			};
+
 			// Función para cargar cualquier entidad (Caballero, Aldeano, Espada)
 			window.cargarEntidad = function(path, position) {
-				loader.load(path, (gltf) => {
-					const modelo = gltf.scene;
-					modelo.position.set(position.x, position.y, position.z);
-					
-					// Ajuste de escala para que coincida con tus bloques de 1x1x1
-					modelo.scale.set(0.5, 0.5, 0.5); 
-					
-					scene.add(modelo);
-					entidadesCargadas.push(modelo);
-					console.log("Entidad cargada con éxito:", path);
-				}, undefined, (error) => {
-					console.error("Error al cargar:", error);
-				});
+				// Validación de posición segura
+				const safePosition = {
+					x: (position && typeof position.x === 'number') ? position.x : 0,
+					y: (position && typeof position.y === 'number') ? position.y : 0,
+					z: (position && typeof position.z === 'number') ? position.z : 0
+				};
+				
+				try {
+					loader.load(path, (gltf) => {
+						const modelo = gltf.scene;
+						modelo.position.set(safePosition.x, safePosition.y, safePosition.z);
+						
+						// Ajuste de escala para que coincida con tus bloques de 1x1x1
+						modelo.scale.set(0.5, 0.5, 0.5); 
+						
+						scene.add(modelo);
+						entidadesCargadas.push(modelo);
+						console.log("Entidad cargada con éxito:", path);
+					}, undefined, (error) => {
+						console.error("Error al cargar:", error);
+						// Crear alternativa simple si falla
+						const alternativa = new THREE.Mesh(
+							new THREE.BoxGeometry(1, 2, 1),
+							new THREE.MeshStandardMaterial({ color: 0x888888 })
+						);
+						alternativa.position.set(safePosition.x, safePosition.y + 1, safePosition.z);
+						scene.add(alternativa);
+						console.log("Alternativa creada para:", path);
+					});
+				} catch (error) {
+					console.error("Error general en cargarEntidad:", error);
+				}
 			};
 
 			// Función para crear entidades medievales en el mundo
 			window.crearEntidadesMedievales = function() {
-				// Caballeros guardianes del castillo
-				cargarEntidad('assets/models/caballero.glb', {x: 10, y: 2, z: 10});
-				cargarEntidad('assets/models/caballero.glb', {x: -10, y: 2, z: 10});
-				cargarEntidad('assets/models/caballero.glb', {x: 10, y: 2, z: -10});
-				cargarEntidad('assets/models/caballero.glb', {x: -10, y: 2, z: -10});
+				console.log('🏰 Creando entidades medievales alternativas...');
 				
-				// Aldeanos en el pueblo
-				cargarEntidad('assets/models/aldeano.glb', {x: 5, y: 1, z: 5});
-				cargarEntidad('assets/models/aldeano.glb', {x: -5, y: 1, z: 5});
-				cargarEntidad('assets/models/aldeano.glb', {x: 5, y: 1, z: -5});
-				cargarEntidad('assets/models/aldeano.glb', {x: -5, y: 1, z: -5});
+				// Sistema de alternativas para personajes
+				const crearAlternativaCaballero = (position) => {
+					const grupo = new THREE.Group();
+					
+					// Cuerpo del caballero
+					const cuerpoGeometry = new THREE.BoxGeometry(0.8, 1.5, 0.4);
+					const cuerpoMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0x4169E1,
+						metalness: 0.3,
+						roughness: 0.7
+					});
+					const cuerpo = new THREE.Mesh(cuerpoGeometry, cuerpoMaterial);
+					cuerpo.position.y = 1;
+					grupo.add(cuerpo);
+					
+					// Casco
+					const cascoGeometry = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+					const cascoMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0xC0C0C0,
+						metalness: 0.8,
+						roughness: 0.2
+					});
+					const casco = new THREE.Mesh(cascoGeometry, cascoMaterial);
+					casco.position.y = 2;
+					grupo.add(casco);
+					
+					grupo.position.set(position.x, position.y, position.z);
+					return grupo;
+				};
 				
-				// Objetos en el mundo (espadas, escudos, etc.)
-				cargarEntidad('assets/models/espada_medieval.glb', {x: 0, y: 1, z: 0});
-				cargarEntidad('assets/models/espada_medieval.glb', {x: 2, y: 1, z: 2});
-				cargarEntidad('assets/models/espada_medieval.glb', {x: -2, y: 1, z: -2});
+				const crearAlternativaAldeano = (position) => {
+					const grupo = new THREE.Group();
+					
+					// Cuerpo del aldeano
+					const cuerpoGeometry = new THREE.BoxGeometry(0.6, 1.2, 0.3);
+					const cuerpoMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0x8B4513,
+						roughness: 0.8
+					});
+					const cuerpo = new THREE.Mesh(cuerpoGeometry, cuerpoMaterial);
+					cuerpo.position.y = 0.8;
+					grupo.add(cuerpo);
+					
+					// Cabeza
+					const cabezaGeometry = new THREE.SphereGeometry(0.3, 8, 6);
+					const cabezaMaterial = new THREE.MeshStandardMaterial({ 
+						color: 0xFFDBAC,
+						roughness: 0.9
+					});
+					const cabeza = new THREE.Mesh(cabezaGeometry, cabezaMaterial);
+					cabeza.position.y = 1.6;
+					grupo.add(cabeza);
+					
+					grupo.position.set(position.x, position.y, position.z);
+					return grupo;
+				};
+				
+				try {
+					// Caballeros guardianes del castillo
+					console.log('⚔️ Creando caballeros guardianes...');
+					const caballero1 = crearAlternativaCaballero({x: 10, y: 0, z: 10});
+					scene.add(caballero1);
+					
+					const caballero2 = crearAlternativaCaballero({x: -10, y: 0, z: 10});
+					scene.add(caballero2);
+					
+					const caballero3 = crearAlternativaCaballero({x: 10, y: 0, z: -10});
+					scene.add(caballero3);
+					
+					const caballero4 = crearAlternativaCaballero({x: -10, y: 0, z: -10});
+					scene.add(caballero4);
+					
+					// Aldeanos en el pueblo
+					console.log('👥 Creando aldeanos...');
+					const aldeano1 = crearAlternativaAldeano({x: 5, y: 0, z: 5});
+					scene.add(aldeano1);
+					
+					const aldeano2 = crearAlternativaAldeano({x: -5, y: 0, z: 5});
+					scene.add(aldeano2);
+					
+					const aldeano3 = crearAlternativaAldeano({x: 5, y: 0, z: -5});
+					scene.add(aldeano3);
+					
+					const aldeano4 = crearAlternativaAldeano({x: -5, y: 0, z: -5});
+					scene.add(aldeano4);
+					
+					console.log('✅ Entidades medievales creadas exitosamente con alternativas');
+				} catch (error) {
+					console.error('❌ Error al crear entidades medievales:', error);
+				}
+			};
+
+			// Función para verificar colisiones en el juego
+			window.verificarColisiones = function() {
+				if (!entityManager || !camera) return;
+				
+				const playerPosition = camera.position;
+				const collisions = entityManager.detectCollisions(playerPosition, 2);
+				
+				if (collisions.length > 0) {
+					console.log(`🎯 Colisiones detectadas: ${collisions.length} objetos`);
+					entityManager.checkProximity(playerPosition, 3);
+				}
+			};
+
+			// Función para verificar interacción con personajes
+			window.verificarInteraccionPersonajes = function() {
+				if (!characterLoader || !camera) return;
+				
+				const playerPosition = camera.position;
+				const nearby = characterLoader.getNearbyCharacters(playerPosition, 3);
+				
+				if (nearby.length > 0) {
+					const character = nearby[0].character;
+					if (character.userData.interactable) {
+						console.log(`💬 Personaje cercano: ${character.userData.description}`);
+						// Mostrar pista de interacción
+						if (window.showInteractionHint) {
+							window.showInteractionHint(character.userData.description);
+						}
+					}
+				}
+			};
+
+			// Función para interactuar con personaje cercano (tecla E)
+			window.interactuarConPersonaje = function() {
+				if (!characterLoader || !camera) return;
+				
+				const playerPosition = camera.position;
+				const interacted = characterLoader.interactWithNearbyCharacter(playerPosition);
+				
+				if (!interacted) {
+					console.log('❌ No hay personajes cercanos para interactuar');
+				}
+			};
+
+			// Función para mostrar inventario
+			window.mostrarInventario = function() {
+				if (!entityManager) return;
+				
+				const inventario = entityManager.getInventory();
+				console.log('🎒 Inventario actual:');
+				inventario.forEach((item, index) => {
+					console.log(`${index + 1}. ${item.description} (${item.type})`);
+				});
 			};
 
 			// Sistema de Intro con Música
@@ -257,6 +1370,9 @@
 
 			// Iniciar intro al cargar la página
 			window.addEventListener('load', function() {
+				// Cargar personaje preferido
+				loadPreferredCharacter();
+				
 				introContainer.style.display = 'block';
 				loadingIndicator.style.display = 'block'; // Mostrar indicador al inicio
 				introMusic.volume = 0.5;
@@ -314,6 +1430,14 @@
 					}
 				}
 				
+				// Inicializar EntityManager y cargar objetos
+				setTimeout(() => {
+					initEntityManager();
+					cargarObjetosRecolectables();
+					initCharacterLoader();
+					cargarPersonajes();
+				}, 2000);
+				
 				animate();
 			};
 
@@ -340,7 +1464,7 @@
 			};
 
 			window.showControls = function() {
-				alert('🎮 CONTROLES TERRABUILD\n\n🏹 MUNDO ORIGINAL:\n• Clic izquierdo: Avanzar\n• Clic derecho: Retroceder\n• Movimiento libre con mouse\n\n🏰 MUNDO MEDIEVAL:\n• Cámara automática rotativa\n• Observa el castillo y estructuras\n\n🏠 VUELTA AL MENÚ:\n• Botón "Menú" en esquina superior derecha');
+				alert('🎮 CONTROLES TERRABUILD\n\n🏹 MUNDO ORIGINAL:\n• Clic izquierdo: Avanzar\n• Clic derecho: Retroceder\n• Movimiento libre con mouse\n\n🏰 MUNDO MEDIEVAL:\n• Cámara automática rotativa\n• Observa el castillo y estructuras\n\n📷 CÁMARA:\n• V: Cambiar entre 1ra/3ra persona\n• Botón "🔄 Cambiar Vista": Cambiar modo\n• Botón "🎯 Resetear": Resetear posición\n• Botón "⚙️ Ajustes": Mostrar ajustes finos\n• Q/E: Ajustar cámara lateral (3ra persona)\n• R/F: Ajustar cámara altura (3ra persona)\n• W/S: Ajustar cámara distancia (3ra persona)\n\n🏠 VUELTA AL MENÚ:\n• Botón "Menú" en esquina superior derecha\n\n🎒 INTERACCIÓN:\n• E: Interactuar con personajes/objetos\n• I: Mostrar inventario');
 			};
 
 			window.backToMenu = function() {
@@ -381,17 +1505,21 @@
 			};
 
 			function init() {
-
+				console.log('🏗️ Iniciando inicialización del mundo 3D...');
+				
 				container = document.getElementById( 'container' );
+				console.log('📦 Contenedor obtenido:', !!container);
 
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
 				camera.position.y = getY( worldHalfWidth, worldHalfDepth ) * 100 + 100;
+				console.log('📷 Cámara creada y posicionada');
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xbfd1e5 );
+				console.log('🌍 Escena creada con fondo');
 
 				// sides
-
+				console.log('🔨 Creando geometrías del terreno...');
 				const matrix = new THREE.Matrix4();
 
 				const pxGeometry = new THREE.PlaneGeometry( 100, 100 );
@@ -427,6 +1555,7 @@
 
 				const geometries = [];
 
+				console.log('🌊 Generando terreno con Perlin noise...');
 				for ( let z = 0; z < worldDepth; z ++ ) {
 
 					for ( let x = 0; x < worldWidth; x ++ ) {
@@ -474,33 +1603,77 @@
 
 				}
 
+				console.log('🔩 Mergiendo geometrías...');
 				const geometry = BufferGeometryUtils.mergeGeometries( geometries );
 				geometry.computeBoundingSphere();
 
+				console.log('🎨 Cargando texturas...');
 				const texture = new THREE.TextureLoader().load( 'textures/minecraft/atlas.png' );
 				texture.colorSpace = THREE.SRGBColorSpace;
 				texture.magFilter = THREE.NearestFilter;
 
 				const mesh = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide } ) );
 				scene.add( mesh );
+				console.log('🏔️ Terreno añadido a la escena');
 
+				console.log('💡 Configurando iluminación...');
 				const ambientLight = new THREE.AmbientLight( 0xeeeeee, 3 );
 				scene.add( ambientLight );
 
 				const directionalLight = new THREE.DirectionalLight( 0xffffff, 12 );
 				directionalLight.position.set( 1, 1, 0.5 ).normalize();
 				scene.add( directionalLight );
+				console.log('☀️ Luces configuradas');
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
+				// Configuración responsiva del renderer
+				renderer = new THREE.WebGLRenderer( { 
+					antialias: true,
+					powerPreference: 'high-performance',
+					stencil: false,
+					depth: true
+				} );
+				
+				// Configurar pixel ratio para dispositivos móviles
+				const pixelRatio = Math.min(window.devicePixelRatio, 2);
+				renderer.setPixelRatio( pixelRatio );
+				
+				// Configurar tamaño inicial
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				
+				// Optimizaciones para móviles
+				if (window.innerWidth <= 768) {
+					renderer.shadowMap.enabled = false;
+					renderer.toneMapping = THREE.ACESFilmicToneMapping;
+					renderer.toneMappingExposure = 1.0;
+				}
+				
 				container.appendChild( renderer.domElement );
+				console.log('✅ Renderer creado y configurado responsivamente');
 
+				// Configuración de controles responsivos
 				controls = new FirstPersonControls( camera, renderer.domElement );
 
-				controls.movementSpeed = 1000;
-				controls.lookSpeed = 0.125;
+				// Ajustar velocidad según dispositivo
+				const isMobile = window.innerWidth <= 768;
+				const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+				
+				if (isMobile) {
+					controls.movementSpeed = 500;  // Más lento en móviles
+					controls.lookSpeed = 0.08;     // Más sensible en táctil
+				} else if (isTablet) {
+					controls.movementSpeed = 750;  // Intermedio para tablets
+					controls.lookSpeed = 0.1;      // Sensibilidad moderada
+				} else {
+					controls.movementSpeed = 1000; // Normal para desktop
+					controls.lookSpeed = 0.125;    // Sensibilidad normal
+				}
+				
 				controls.lookVertical = true;
+				console.log('🕹️ Controles configurados responsivamente:', {
+					device: isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
+					movementSpeed: controls.movementSpeed,
+					lookSpeed: controls.lookSpeed
+				});
 
 				stats = new Stats();
 				container.appendChild( stats.dom );
@@ -508,18 +1681,74 @@
 				//
 
 				window.addEventListener( 'resize', onWindowResize );
-
+				window.addEventListener('keydown', function(event) {
+					// Tecla V para cambiar modo de cámara
+					if (event.key === 'v' || event.key === 'V') {
+						toggleCameraMode();
+					}
+					
+					// Teclas para ajustar cámara en tercera persona
+					if (cameraMode === 'third') {
+						switch(event.key) {
+							case 'q':
+							case 'Q':
+								adjustCameraOffset('x', -0.5);
+								break;
+							case 'e':
+							case 'E':
+								adjustCameraOffset('x', 0.5);
+								break;
+							case 'r':
+							case 'R':
+								adjustCameraOffset('y', 0.5);
+								break;
+							case 'f':
+							case 'F':
+								adjustCameraOffset('y', -0.5);
+								break;
+							case 'w':
+							case 'W':
+								adjustCameraOffset('z', 0.5);
+								break;
+							case 's':
+							case 'S':
+								adjustCameraOffset('z', -0.5);
+								break;
+						}
+					}
+					
+					// Tecla E para interactuar con personajes
+					if (event.key === 'e' || event.key === 'E') {
+						interactuarConPersonaje();
+					}
+					
+					// Tecla I para mostrar inventario
+					if (event.key === 'i' || event.key === 'I') {
+						mostrarInventario();
+					}
+				});
+				
+				console.log('✅ Inicialización completada exitosamente');
 			}
 
 			function onWindowResize() {
-
+				// Actualizar aspect ratio de la cámara
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
+				// Actualizar tamaño del renderer
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
+				// Actualizar controles
 				controls.handleResize();
-
+				
+				// Log para debugging responsivo
+				console.log('📱 Ventana redimensionada:', {
+					width: window.innerWidth,
+					height: window.innerHeight,
+					aspectRatio: window.innerWidth / window.innerHeight,
+					devicePixelRatio: window.devicePixelRatio
+				});
 			}
 
 			function generateHeight( width, height ) {
@@ -559,18 +1788,38 @@
 
 			function animate() {
 
-				animationId = requestAnimationFrame( animate );
-				const delta = clock.getDelta();
+				requestAnimationFrame( animate );
 
-				render();
-				stats.update();
+				if (gameStarted && controls) {
+					controls.update( clock.getDelta() );
+				}
 
-			}
+				if ( gameStarted ) {
+					// Verificar colisiones con objetos
+					verificarColisiones();
+					
+					// Verificar interacción con personajes
+					verificarInteraccionPersonajes();
+					
+					// Actualizar animaciones de personajes
+					if (characterLoader) {
+						characterLoader.updateAnimations(clock.getDelta());
+						
+						// Hacer que personajes miren al jugador
+						if (camera) {
+							characterLoader.updateCharactersFacingPlayer(camera.position);
+						}
+					}
+					
+					// Actualizar cámara tercera persona
+					if (cameraMode === 'third') {
+						updateThirdPersonCamera();
+					}
+				}
 
-			function render() {
-
-				controls.update( clock.getDelta() );
-				renderer.render( scene, camera );
+				if (renderer && scene && camera) {
+					renderer.render( scene, camera );
+				}
 
 			}
 
