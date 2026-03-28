@@ -102,15 +102,46 @@
 		<source src="img/menu principal.mp4" type="video/mp4">
 	</video>
 	
+	<!-- SVG filter para botones -->
+	<svg style="position: absolute; width: 0; height: 0;">
+		<filter id="remove-black-button-13" color-interpolation-filters="sRGB">
+			<feColorMatrix type="matrix" values="1 0 0 0 0
+						0 1 0 0 0
+						0 0 1 0 0
+						-1 -1 -1 0 1" result="black-pixels"></feColorMatrix>
+			<feComposite in="SourceGraphic" in2="black-pixels" operator="out"></feComposite>
+		</filter>
+	</svg>
+
 	<!-- Menú Principal -->
 	<div id="mainMenu" class="medieval-menu">
 		<h1 class="menu-title">🏰 TerraBuild 🏰</h1>
 		<div class="menu-buttons">
-			<button class="menu-item" onclick="startOriginalGame()">🎮 Jugar Original</button>
-			<button class="menu-item" onclick="startGame()">🏰 Mundo Medieval</button>
-			<button class="menu-item" onclick="showOptions()">⚙️ Opciones</button>
-			<button class="menu-item" onclick="showControls()">🎮 Controles</button>
-			<button class="menu-item" onclick="showCharacterSelection()">👥 Elegir Personaje</button>
+			<button class="menu-item" onclick="startOriginalGame()">
+				<span class="text">🎮 Jugar Original</span>
+				<span class="menu-item-background"></span>
+				<span class="menu-item-border"></span>
+			</button>
+			<button class="menu-item" onclick="startGame()">
+				<span class="text">🏰 Mundo Medieval</span>
+				<span class="menu-item-background"></span>
+				<span class="menu-item-border"></span>
+			</button>
+			<button class="menu-item" onclick="showOptions()">
+				<span class="text">⚙️ Opciones</span>
+				<span class="menu-item-background"></span>
+				<span class="menu-item-border"></span>
+			</button>
+			<button class="menu-item" onclick="showControls()">
+				<span class="text">🎮 Controles</span>
+				<span class="menu-item-background"></span>
+				<span class="menu-item-border"></span>
+			</button>
+			<button class="menu-item" onclick="showCharacterSelection()">
+				<span class="text">👥 Elegir Personaje</span>
+				<span class="menu-item-background"></span>
+				<span class="menu-item-border"></span>
+			</button>
 		</div>
 	</div>
 
@@ -130,7 +161,11 @@
 						<span>🛡️ Defensa: Media</span>
 						<span>🏃 Velocidad: Media</span>
 					</div>
-					<button class="select-btn">Elegir Guerrero</button>
+					<button class="select-btn" onclick="selectCharacter('P1')">
+					<span class="text">Elegir Guerrero</span>
+					<span class="menu-item-background"></span>
+					<span class="menu-item-border"></span>
+				</button>
 				</div>
 				
 				<div class="character-card" onclick="selectCharacter('P2')">
@@ -144,12 +179,20 @@
 						<span>🛡️ Defensa: Baja</span>
 						<span>🏃 Velocidad: Alta</span>
 					</div>
-					<button class="select-btn">Elegir Mago</button>
+					<button class="select-btn" onclick="selectCharacter('P2')">
+					<span class="text">Elegir Mago</span>
+					<span class="menu-item-background"></span>
+					<span class="menu-item-border"></span>
+				</button>
 				</div>
 			</div>
 			
 			<div class="selection-actions">
-				<button class="menu-item" onclick="backToMenuFromSelection()">🔙 Volver al Menú</button>
+				<button class="menu-item" onclick="backToMenuFromSelection()">
+					<span class="text">🔙 Volver al Menú</span>
+					<span class="menu-item-background"></span>
+					<span class="menu-item-border"></span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -194,6 +237,10 @@
 					<span class="btn-icon">🎯</span>
 					<span class="btn-text">Resetear</span>
 				</button>
+				<button class="camera-btn world-toggle" onclick="toggleWorld()" id="world-toggle">
+					<span class="btn-icon">🌍</span>
+					<span class="btn-text">Cambiar Mundo</span>
+				</button>
 			</div>
 			<div class="camera-adjustments" id="camera-adjustments" style="display: none;">
 				<div class="adjustment-group">
@@ -215,8 +262,16 @@
 		</div>
 		
 		<!-- Botones Principales -->
-		<button class="menu-item" onclick="backToMenu()" style="position: absolute; top: 20px; right: 20px; min-width: 100px; padding: 10px 20px;">Menú</button>
-		<button class="menu-item" onclick="toggleCameraAdjustments()" style="position: absolute; top: 70px; right: 20px; min-width: 100px; padding: 10px 20px; font-size: 12px;">⚙️ Ajustes</button>
+		<button class="menu-item game-menu-btn" onclick="backToMenu()">
+			<span class="text">Menú</span>
+			<span class="menu-item-background"></span>
+			<span class="menu-item-border"></span>
+		</button>
+		<button class="menu-item game-menu-btn" onclick="toggleCameraAdjustments()">
+			<span class="text">⚙️ Ajustes</span>
+			<span class="menu-item-background"></span>
+			<span class="menu-item-border"></span>
+		</button>
 	</div>
 
 		<script type="importmap">
@@ -226,10 +281,16 @@
 					"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
 					"./medieval-world.js": "./medieval-world.js",
 					"./entity-manager.js": "./entity-manager.js",
-					"./character-loader.js": "./character-loader.js"
+					"./character-loader.js": "./character-loader.js",
+					"./map-loader.js": "./map-loader.js"
 				}
 			}
 		</script>
+
+		<!-- Cargador de Mapas -->
+		<script src="map-loader.js"></script>
+		<script src="minecraft-map-reader.js"></script>
+		<script src="game-system.js"></script>
 
 		<script type="module">
 
@@ -1442,66 +1503,342 @@
 			};
 
 			window.startGame = function() {
+				console.log('🎮 Iniciando TerraBuild - Sistema Completo...');
+				
+				// Ocultar elementos del menú
 				document.getElementById('backgroundVideo').style.display = 'none';
 				document.getElementById('mainMenu').style.display = 'none';
 				document.getElementById('gameScreen').style.display = 'block';
 				
-				// NO pausar música del menú - mantener continuidad
-				// menuMusic.pause(); // Comentado para continuidad
-				
-				if (!gameStarted) {
-					// Cargar mundo medieval mejorado
-					loadMedievalWorld();
-					gameStarted = true;
+				// Iniciar sistema del juego
+				if (window.gameSystem && !window.gameSystem.isRunning) {
+					console.log('🚀 Iniciando GameSystem...');
+					window.gameSystem.start().then(success => {
+						if (success) {
+							console.log('✅ Juego iniciado correctamente');
+							showGameMessage('🏰 ¡Bienvenido a TerraBuild! 🏰\n\n🎮 Usa el mouse para mover la cámara\n📍 E: Interactuar\n🔄 V: Cambiar vista\n🏠 Menú: Volver al menú principal');
+						} else {
+							console.error('❌ Error al iniciar el juego');
+							showGameMessage('❌ Error al iniciar el juego');
+						}
+					});
+				} else if (window.gameSystem && window.gameSystem.isRunning) {
+					console.log('🔄 El juego ya está en ejecución');
+					showGameMessage('� El juego ya está en ejecución');
 				} else {
-					// Si ya hay un juego iniciado, solo mostrar el medieval
-					loadMedievalWorld();
+					// Fallback al método antiguo
+					console.log('⚠️ Usando método de inicio alternativo...');
+					initializeGame();
 				}
+				
+				// Configurar controles
+				setupGameControls();
 			};
 
 			window.showOptions = function() {
 				alert('Opciones del juego - Próximamente');
 			};
 
-			window.showControls = function() {
-				alert('🎮 CONTROLES TERRABUILD\n\n🏹 MUNDO ORIGINAL:\n• Clic izquierdo: Avanzar\n• Clic derecho: Retroceder\n• Movimiento libre con mouse\n\n🏰 MUNDO MEDIEVAL:\n• Cámara automática rotativa\n• Observa el castillo y estructuras\n\n📷 CÁMARA:\n• V: Cambiar entre 1ra/3ra persona\n• Botón "🔄 Cambiar Vista": Cambiar modo\n• Botón "🎯 Resetear": Resetear posición\n• Botón "⚙️ Ajustes": Mostrar ajustes finos\n• Q/E: Ajustar cámara lateral (3ra persona)\n• R/F: Ajustar cámara altura (3ra persona)\n• W/S: Ajustar cámara distancia (3ra persona)\n\n🏠 VUELTA AL MENÚ:\n• Botón "Menú" en esquina superior derecha\n\n🎒 INTERACCIÓN:\n• E: Interactuar con personajes/objetos\n• I: Mostrar inventario');
+			// Función para inicializar el juego
+			window.initializeGame = function() {
+				console.log('🔧 Inicializando sistemas del juego...');
+				
+				// Inicializar mundo medieval
+				loadMedievalWorld();
+				
+				// Inicializar sistemas adicionales
+				setTimeout(() => {
+					console.log('👥 Cargando entidades...');
+					if (window.crearEntidadesMedievales) {
+						window.crearEntidadesMedievales();
+					}
+					
+					console.log('🎒 Inicializando inventario...');
+					if (window.initInventory) {
+						window.initInventory();
+					}
+					
+					console.log('⚔️ Cargando sistema de combate...');
+					if (window.initCombatSystem) {
+						window.initCombatSystem();
+					}
+					
+					console.log('🗺️ Inicializando minimapa...');
+					if (window.initMinimap) {
+						window.initMinimap();
+					}
+					
+					console.log('✅ Todos los sistemas inicializados');
+				}, 1500);
 			};
 
+			// Función para reiniciar el juego
+			window.restartGame = function() {
+				console.log('🔄 Reiniciando juego...');
+				
+				// Limpiar escena actual
+				if (window.medievalWorld && window.medievalWorld.scene) {
+					window.medievalWorld.scene.clear();
+				}
+				
+				// Reinicializar sistemas
+				initializeGame();
+			};
+
+			// Función para configurar controles del juego
+			window.setupGameControls = function() {
+				console.log('🎮 Configurando controles...');
+				
+				// Configurar controles de teclado
+				document.addEventListener('keydown', handleKeyDown);
+				document.addEventListener('keyup', handleKeyUp);
+				
+				// Configurar controles de mouse
+				document.addEventListener('mousemove', handleMouseMove);
+				document.addEventListener('click', handleMouseClick);
+				
+				console.log('✅ Controles configurados');
+			};
+
+			// Manejador de teclas presionadas
+			window.handleKeyDown = function(event) {
+				switch(event.key.toLowerCase()) {
+					case 'e':
+						interactWithWorld();
+						break;
+					case 'v':
+						toggleCameraView();
+						break;
+					case 'i':
+						toggleInventory();
+						break;
+					case 'escape':
+						pauseGame();
+						break;
+				}
+			};
+
+			// Manejador de teclas liberadas
+			window.handleKeyUp = function(event) {
+				// Lógica para liberar teclas
+			};
+
+			// Manejador de movimiento del mouse
+			window.handleMouseMove = function(event) {
+				if (window.medievalWorld && window.medievalWorld.camera) {
+					// Movimiento de cámara basado en mouse
+					const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+					const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+					
+					// Actualizar cámara suavemente
+					if (window.medievalWorld.cameraTarget) {
+						window.medievalWorld.cameraTarget.x = mouseX * 10;
+						window.medievalWorld.cameraTarget.z = mouseY * 10;
+					}
+				}
+			};
+
+			// Manejador de clic del mouse
+			window.handleMouseClick = function(event) {
+				console.log('🖱️ Clic del mouse detectado');
+				// Lógica para interacciones con clic
+			};
+
+			// Función para interactuar con el mundo
+			window.interactWithWorld = function() {
+				console.log('📍 Interactuando con el mundo...');
+				
+				// Buscar objetos cercanos para interactuar
+				if (window.entityManager) {
+					const nearbyEntities = window.entityManager.getNearbyEntities(5); // 5 bloques de distancia
+					
+					if (nearbyEntities.length > 0) {
+						console.log(`👥 ${nearbyEntities.length} entidades cercanas encontradas`);
+						nearbyEntities[0].interact();
+					} else {
+						console.log('🔍 No hay entidades cercanas para interactuar');
+						showGameMessage('🔍 No hay nada cerca para interactuar');
+					}
+				}
+			};
+
+			// Función para cambiar vista de cámara
+			window.toggleCameraView = function() {
+				console.log('📷 Cambiando vista de cámara...');
+				
+				if (window.medievalWorld && window.medievalWorld.toggleCameraMode) {
+					window.medievalWorld.toggleCameraMode();
+					const currentMode = window.medievalWorld.cameraMode || 'third';
+					showGameMessage(`📷 Vista: ${currentMode === 'first' ? 'Primera Persona' : 'Tercera Persona'}`);
+				}
+			};
+
+			// Función para mostrar/ocultar inventario
+			window.toggleInventory = function() {
+				console.log('🎒 Alternando inventario...');
+				showGameMessage('🎒 Inventario - Próximamente');
+			};
+
+			// Función para pausar el juego
+			window.pauseGame = function() {
+				console.log('⏸️ Juego pausado');
+				showGameMessage('⏸️ Juego Pausado\n\nPresiona ESC para continuar');
+			};
+
+			// Función para mostrar mensajes del juego
+			window.showGameMessage = function(message) {
+				console.log('💬 Mensaje del juego:', message);
+				
+				// Crear elemento de mensaje
+				const messageDiv = document.createElement('div');
+				messageDiv.style.cssText = `
+					position: fixed;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					background: rgba(0, 0, 0, 0.8);
+					color: #d4af37;
+					padding: 20px 30px;
+					border-radius: 10px;
+					border: 2px solid #d4af37;
+					font-family: 'Times New Roman', serif;
+					font-size: 16px;
+					text-align: center;
+					z-index: 10000;
+					white-space: pre-line;
+					box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+				`;
+				messageDiv.textContent = message;
+				
+				document.body.appendChild(messageDiv);
+				
+				// Auto-eliminar después de 3 segundos
+				setTimeout(() => {
+					if (document.body.contains(messageDiv)) {
+						document.body.removeChild(messageDiv);
+					}
+				}, 3000);
+			};
+
+			// Función para volver al menú principal
 			window.backToMenu = function() {
+				console.log('🏠 Volviendo al menú principal...');
+				
+				// Detener sistema del juego
+				if (window.gameSystem && window.gameSystem.isRunning) {
+					window.gameSystem.stop();
+				}
+				
+				// Detener mundo medieval si está activo
+				if (window.medievalWorld) {
+					window.medievalWorld.cleanup();
+				}
+				
+				// Detener animaciones
+				if (window.animationId) {
+					cancelAnimationFrame(window.animationId);
+				}
+				
+				// Restablecer estado
+				gameStarted = false;
+				window.currentWorld = null;
+				
+				// Mostrar menú principal
 				document.getElementById('gameScreen').style.display = 'none';
 				document.getElementById('mainMenu').style.display = 'block';
 				document.getElementById('backgroundVideo').style.display = 'block';
 				
-				// NO reanudar música del menú - mantener continuidad
-				// startMenuMusic(); // Comentado para continuidad
+				console.log('✅ De vuelta al menú principal');
+			};
+
+			window.showControls = function() {
+				alert('🎮 CONTROLES TERRABUILD\n\n🏹 MUNDO ORIGINAL:\n• Clic izquierdo: Avanzar\n• Clic derecho: Retroceder\n• Movimiento libre con mouse\n\n🏰 MUNDO MEDIEVAL:\n• Cámara automática rotativa\n• Observa el castillo y estructuras\n\n📷 CÁMARA:\n• V: Cambiar entre 1ra/3ra persona\n• Botón "🔄 Cambiar Vista": Cambiar modo\n• Botón "🎯 Resetear": Resetear posición\n• Botón "⚙️ Ajustes": Mostrar ajustes finos\n• Q/E: Ajustar cámara lateral (3ra persona)\n• R/F: Ajustar cámara altura (3ra persona)\n• W/S: Ajustar cámara distancia (3ra persona)\n\n🏠 VUELTA AL MENÚ:\n• Botón "Menú" en esquina superior derecha\n\n🎒 INTERACCIÓN:\n• E: Interactuar con personajes/objetos\n• I: Mostrar inventario');
+			};
+
+			// Función para alternar entre mundos
+			window.toggleWorld = async function() {
+				console.log('🔄 Alternando entre mundos...');
 				
-				if (animationId) {
-					cancelAnimationFrame(animationId);
+				const currentWorld = window.currentWorld || 'original';
+				const newWorld = currentWorld === 'original' ? 'medieval' : 'original';
+				
+				console.log(`🌍 Cambiando de ${currentWorld} a ${newWorld}`);
+				
+				try {
+					if (newWorld === 'medieval') {
+						// Cargar mundo medieval
+						await window.loadMedievalWorld();
+						window.currentWorld = 'medieval';
+						console.log('✅ Mundo Medieval activado');
+						
+						// Actualizar UI
+						const worldBtn = document.getElementById('world-toggle');
+						if (worldBtn) {
+							worldBtn.textContent = '🏰 Cambiar a Original';
+						}
+					} else {
+						// Cargar mundo original
+						window.startOriginalGame();
+						window.currentWorld = 'original';
+						console.log('✅ Mundo Original activado');
+						
+						// Actualizar UI
+						const worldBtn = document.getElementById('world-toggle');
+						if (worldBtn) {
+							worldBtn.textContent = '🎮 Cambiar a Medieval';
+						}
+					}
+				} catch (error) {
+					console.error('❌ Error al cambiar de mundo:', error);
 				}
 			};
 
-			window.loadMedievalWorld = function() {
-				// Limpiar contenedor
-				const container = document.getElementById('container');
-				container.innerHTML = '';
+			// Función para mostrar estado del mundo actual
+			window.showWorldStatus = function() {
+				const currentWorld = window.currentWorld || 'original';
+				const worldName = currentWorld === 'medieval' ? '🏰 Medieval' : '🎮 Original';
+				console.log(`🌍 Mundo actual: ${worldName}`);
+				alert(`Mundo actual: ${worldName}\n\nPresiona F5 para recargar\nUsa el botón de alternar mundos si está disponible`);
+			};
+
+			window.loadMedievalWorld = async function() {
+				console.log('🏰 Cargando Mundo Medieval Mejorado...');
 				
-				// Cargar script del mundo medieval dinámicamente
-				const script = document.createElement('script');
-				script.type = 'module';
-				script.src = './medieval-world.js';
-				script.onload = () => {
-					console.log('Mundo medieval cargado');
-					// Cargar entidades 3D después de cargar el mundo
-					setTimeout(() => {
-						crearEntidadesMedievales();
-					}, 1000);
-				};
-				script.onerror = () => {
-					console.error('Error al cargar mundo medieval');
-					// Cargar mundo original como fallback
-					init();
-				};
-				document.head.appendChild(script);
+				try {
+					// Limpiar container
+					const container = document.getElementById('container');
+					if (container) {
+						container.innerHTML = '';
+					}
+					
+					// Inicializar mundo medieval
+					const medievalWorld = await window.initMedievalWorld('container');
+					
+					if (medievalWorld) {
+						console.log('✅ Mundo Medieval cargado exitosamente');
+						
+						// Integrar con sistema principal
+						if (typeof window.scene !== 'undefined') {
+							console.log('🔄 Integrando con sistema principal...');
+							// El mundo medieval ya tiene su propia escena y cámara
+							// No necesitamos hacer nada más
+						}
+						
+						// Cargar entidades adicionales
+						setTimeout(() => {
+							console.log('👥 Cargando entidades adicionales...');
+							window.crearEntidadesMedievales();
+						}, 1000);
+						
+						return medievalWorld;
+					} else {
+						console.error('❌ Error al cargar Mundo Medieval');
+						return null;
+					}
+				} catch (error) {
+					console.error('❌ Error crítico al cargar Mundo Medieval:', error);
+					return null;
+				}
 			};
 
 			function init() {

@@ -484,23 +484,119 @@ body {
 }
 
 .menu-item {
-    background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
-    color: #d4af37;
-    border: 2px solid #d4af37;
-    padding: 18px 30px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-family: 'Times New Roman', serif;
-    font-size: 18px;
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    transition: all 0.3s ease;
-    min-width: 250px;
-    text-align: center;
-    /* Asegurar interactividad */
-    pointer-events: auto !important;
-    touch-action: manipulation !important;
-    -webkit-tap-highlight-color: rgba(212, 175, 55, 0.3);
+  touch-action: manipulation;
+  background: none;
+  position: relative;
+  border-width: 4px 12px;
+  border-style: solid;
+  border-color: transparent;
+  padding: 8px 24px;
+  text-align: center;
+  color: #fff;
+  transition-property: transform;
+  transition-duration: 0.4s;
+  min-width: 250px;
+  font-family: 'Times New Roman', serif;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.menu-item:active {
+  transform: scale(0.92);
+}
+
+.menu-item-background {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0%, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0% calc(100% - 12px), 0% 12px);
+  background-color: saddlebrown;
+  background-image: radial-gradient(transparent, rgba(0, 0, 0, 0.8)), linear-gradient(to bottom, #af6a65, calc(12.5% - 1px), #cfa381, #88312b calc(12.5% + 1px) 50%, #601d2c 50% calc(87.5% - 1px), #994021, #341227 calc(87.5% + 1px));
+  transition-property: filter;
+  transition-duration: 0.2s;
+  will-change: filter;
+}
+
+.menu-item .text {
+  background: linear-gradient(180deg, #FFE5C2 1%, #CDAF87 100%), #FFFFFF;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  z-index: 3;
+  position: relative;
+}
+
+@media (hover: hover) {
+  .menu-item:hover .menu-item-background {
+    filter: brightness(0.8);
+  }
+}
+
+.menu-item:hover .menu-item-background {
+  filter: brightness(0.8);
+}
+
+.menu-item:active .menu-item-background {
+  filter: brightness(0.6);
+}
+
+.menu-item-border {
+  position: absolute;
+  z-index: 1;
+  inset: -4px -12px;
+}
+
+@supports (-webkit-mask-box-image: inherit) or (mask-border: inherit) {
+  .menu-item-border {
+    background-image: linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
+    -webkit-mask-box-image-source: url("../img/baldurs-gate-3-border.svg");
+    -webkit-mask-box-image-slice: 15 23;
+    -webkit-mask-box-image-width: 15px 23px;
+    -webkit-mask-box-image-repeat: repeat;
+    mask-border-source: url("../img/baldurs-gate-3-border.svg");
+    mask-border-slice: 15 23;
+    mask-border-width: 15px 23px;
+    mask-border-repeat: repeat;
+  }
+}
+
+@supports not ((-webkit-mask-box-image: inherit) or (mask-border: inherit)) {
+  .menu-item-border {
+    border-width: 15px 23px;
+    border-style: solid;
+    border-color: transparent;
+    border-image-source: url("../img/baldurs-gate-3-border-inverted.svg");
+    border-image-slice: 15 23;
+    border-image-width: 15px 23px;
+    border-image-repeat: repeat;
+    background-image: linear-gradient(#000, #000), linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
+    background-origin: content-box, border-box;
+    background-repeat: no-repeat;
+    filter: url("#remove-black-button-13");
+  }
+}
+
+@keyframes goldShimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Botones del juego con posicionamiento */
+.game-menu-btn {
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    min-width: 100px !important;
+    padding: 10px 20px !important;
+    font-size: 12px !important;
+    z-index: 1000 !important;
+}
+
+.game-menu-btn:nth-child(2) {
+    top: 70px !important;
 }
 
 @media (max-width: 768px) {
@@ -687,37 +783,211 @@ body {
 }
 
 .select-btn {
-    background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
-    color: #d4af37;
-    border: 2px solid #d4af37;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Times New Roman', serif;
-    font-size: 14px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-    transition: all 0.3s ease;
-    margin-top: 10px;
+  touch-action: manipulation;
+  background: none;
+  position: relative;
+  border-width: 4px 12px;
+  border-style: solid;
+  border-color: transparent;
+  padding: 8px 24px;
+  text-align: center;
+  color: #fff;
+  transition-property: transform;
+  transition-duration: 0.4s;
+  font-family: 'Times New Roman', serif;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  min-width: auto;
+}
+
+.select-btn:active {
+  transform: scale(0.92);
+}
+
+.select-btn-background {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0%, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0% calc(100% - 12px), 0% 12px);
+  background-color: saddlebrown;
+  background-image: radial-gradient(transparent, rgba(0, 0, 0, 0.8)), linear-gradient(to bottom, #af6a65, calc(12.5% - 1px), #cfa381, #88312b calc(12.5% + 1px) 50%, #601d2c 50% calc(87.5% - 1px), #994021, #341227 calc(87.5% + 1px));
+  transition-property: filter;
+  transition-duration: 0.2s;
+  will-change: filter;
+}
+
+.select-btn .text {
+  background: linear-gradient(180deg, #FFE5C2 1%, #CDAF87 100%), #FFFFFF;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  z-index: 3;
+  position: relative;
+}
+
+@media (hover: hover) {
+  .select-btn:hover .select-btn-background {
+    filter: brightness(0.8);
+  }
+}
+
+.select-btn:hover .select-btn-background {
+  filter: brightness(0.8);
+}
+
+.select-btn:active .select-btn-background {
+  filter: brightness(0.6);
+}
+
+.select-btn-border {
+  position: absolute;
+  z-index: 1;
+  inset: -4px -12px;
+}
+
+@supports (-webkit-mask-box-image: inherit) or (mask-border: inherit) {
+  .select-btn-border {
+    background-image: linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
+    -webkit-mask-box-image-source: url("../img/baldurs-gate-3-border.svg");
+    -webkit-mask-box-image-slice: 15 23;
+    -webkit-mask-box-image-width: 15px 23px;
+    -webkit-mask-box-image-repeat: repeat;
+    mask-border-source: url("../img/baldurs-gate-3-border.svg");
+    mask-border-slice: 15 23;
+    mask-border-width: 15px 23px;
+    mask-border-repeat: repeat;
+  }
+}
+
+@supports not ((-webkit-mask-box-image: inherit) or (mask-border: inherit)) {
+  .select-btn-border {
+    border-width: 15px 23px;
+    border-style: solid;
+    border-color: transparent;
+    border-image-source: url("../img/baldurs-gate-3-border-inverted.svg");
+    border-image-slice: 15 23;
+    border-image-width: 15px 23px;
+    border-image-repeat: repeat;
+    background-image: linear-gradient(#000, #000), linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
+    background-origin: content-box, border-box;
+    background-repeat: no-repeat;
+    filter: url("#remove-black-button-13");
+  }
+}
+
+/* Map Cards Styles */
+.map-card {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.3) 0%, rgba(101, 67, 33, 0.2) 100%) !important;
+    border: 3px solid #d4af37 !important;
+    border-radius: 15px !important;
+    padding: 20px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: rgba(212, 175, 55, 0.3) !important;
+}
+
+.map-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3) !important;
+    border-color: #ffd700 !important;
+}
+
+.map-card.selected {
+    border-color: #ffd700 !important;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(212, 175, 55, 0.2) 100%) !important;
+    transform: scale(1.05) !important;
+}
+
+.map-icon {
+    font-size: 48px !important;
+    margin-bottom: 15px !important;
+}
+
+.map-card h3 {
+    color: #d4af37 !important;
+    font-size: 18px !important;
+    margin: 10px 0 !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.map-card p {
+    color: #f4e4c1 !important;
+    font-size: 12px !important;
+    margin: 10px 0 !important;
+    line-height: 1.4 !important;
+}
+
+.map-stats {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+    margin: 15px 0 !important;
+    font-size: 11px !important;
+}
+
+.map-stats span {
+    background: rgba(139, 69, 19, 0.5) !important;
+    padding: 3px 8px !important;
+    border-radius: 5px !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    color: #d4af37 !important;
+}
+
+/* Map Selection Container */
+.map-selection-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 20px !important;
+    margin: 20px 0 !important;
 }
 
 @media (max-width: 768px) {
-    .select-btn {
-        padding: 8px 16px;
-        font-size: 12px;
-        margin-top: 8px;
+    .map-selection-container {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .map-card {
+        padding: 15px !important;
+    }
+    
+    .map-icon {
+        font-size: 36px !important;
+    }
+    
+    .map-card h3 {
+        font-size: 16px !important;
     }
 }
 
 @media (max-width: 480px) {
-    .select-btn {
-        padding: 6px 12px;
-        font-size: 11px;
-        margin-top: 6px;
+    .map-selection-container {
+        gap: 10px !important;
+    }
+    
+    .map-card {
+        padding: 12px !important;
+    }
+    
+    .map-icon {
+        font-size: 32px !important;
+    }
+    
+    .map-card h3 {
+        font-size: 14px !important;
+    }
+    
+    .map-card p {
+        font-size: 11px !important;
     }
 }
-
-/* Pantalla de Juego responsiva */
 #gameScreen {
     position: fixed;
     top: 0;
@@ -1680,14 +1950,27 @@ body {
 }
 
 .menu-item:hover {
-	background: linear-gradient(135deg, rgba(160, 82, 45, 0.6) 0%, rgba(139, 69, 19, 0.5) 100%);
-	color: #ffd700;
-	border-color: #ffd700;
-	text-shadow: 2px 2px 4px rgba(255, 215, 0, 0.7);
-	transform: translateY(-2px);
-	box-shadow: 
-		inset 0 2px 6px rgba(255, 215, 0, 0.3),
-		0 6px 12px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #4a3026 0%, #362019 50%, #1f120f 100%);
+    color: #ffd700;
+    border-color: #ffd700;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        inset 0 3px 6px rgba(255, 215, 0, 0.5),
+        0 8px 20px rgba(0, 0, 0, 0.7),
+        0 0 30px rgba(255, 215, 0, 0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9), 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.menu-item:hover::before {
+    opacity: 1;
+    animation-duration: 1.5s;
+}
+
+.menu-item:hover::after {
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
 }
 
 .menu-item:active {
