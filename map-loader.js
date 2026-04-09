@@ -14,7 +14,7 @@ class MapLoader {
      * Inicializa el sistema de mapas
      */
     async init() {
-        console.log('🗺️ Inicializando sistema de mapas...');
+        console.log('Inicializando sistema de mapas...');
         await this.loadAvailableMaps();
         this.setupMapSelector();
     }
@@ -29,41 +29,45 @@ class MapLoader {
                 name: 'Casa Medieval 01',
                 description: 'Una hermosa casa medieval con jardín',
                 path: 'MapasTerra/A_Medieval_House_01/A Medieval House - 01',
-                icon: '🏠',
                 difficulty: 'Fácil',
-                size: 'Pequeño'
+                size: 'Pequeño',
+                regions: 16,
+                worldSize: '16x16 chunks'
             },
             {
                 id: 'medieval_mansion',
                 name: 'Mansión Medieval',
                 description: 'Una gran mansión con múltiples habitaciones',
                 path: 'MapasTerra/Medieval_Mansion',
-                icon: '🏰',
                 difficulty: 'Medio',
-                size: 'Grande'
+                size: 'Grande',
+                regions: 4,
+                worldSize: '2x2 chunks'
             },
             {
                 id: 'mountain_village',
                 name: 'Pueblo de Montaña',
                 description: 'Un pueblo medieval en las montañas',
-                path: 'MapasTerra/Medieval_Mountain_Village',
-                icon: '⛰️',
+                path: 'MapasTerra/Medieval_Mountain_Village/Medieval Mountain Village',
                 difficulty: 'Medio',
-                size: 'Mediano'
+                size: 'Mediano',
+                regions: 26,
+                worldSize: '9x9 chunks'
             },
             {
                 id: 'beauclair_palace',
                 name: 'Palacio Beauclair',
                 description: 'Un magnífico palacio real',
-                path: 'MapasTerra/minecraftmaps.com-Beauclair_Palace',
-                icon: '👑',
+                path: 'MapasTerra/Beauclair_Palace/The Witcher 1.0',
                 difficulty: 'Difícil',
-                size: 'Enorme'
+                size: 'Enorme',
+                regions: 51,
+                worldSize: '11x11 chunks'
             }
         ];
 
         this.maps = availableMaps;
-        console.log(`📋 ${this.maps.length} mapas encontrados`);
+        console.log(`${this.maps.length} mapas encontrados`);
     }
 
     /**
@@ -76,7 +80,7 @@ class MapLoader {
             const mapSelectorBtn = document.createElement('button');
             mapSelectorBtn.className = 'menu-item';
             mapSelectorBtn.innerHTML = `
-                <span class="text">🗺️ Seleccionar Mapa</span>
+                <span class="text">Seleccionar Mapa</span>
                 <span class="menu-item-background"></span>
                 <span class="menu-item-border"></span>
             `;
@@ -192,12 +196,12 @@ class MapLoader {
      * Carga los datos del mapa desde los archivos de Minecraft
      */
     async loadMapData(map) {
-        console.log(`📂 Cargando datos del mapa desde: ${map.path}`);
+        console.log(`Cargando datos del mapa desde: ${map.path}`);
         
         try {
             // Usar el lector real de mapas de Minecraft
             if (window.minecraftMapReader) {
-                console.log('🔧 Usando lector real de mapas de Minecraft...');
+                console.log('Usando lector real de mapas de Minecraft...');
                 
                 // Procesar las regiones del mapa
                 const processedChunks = await window.minecraftMapReader.processMapRegion(map.path);
@@ -215,11 +219,11 @@ class MapLoader {
                 };
 
                 this.mapData.set(map.id, mapData);
-                console.log('✅ Datos del mapa cargados con lector real');
-                console.log(`📊 ${processedChunks.size} chunks procesados`);
+                console.log('Datos del mapa cargados con lector real');
+                console.log(`${processedChunks.size} chunks procesados`);
             } else {
                 // Fallback al método simulado
-                console.log('⚠️ Usando método simulado (lector no disponible)');
+                console.log('Usando método simulado (lector no disponible)');
                 const mapData = {
                     name: map.name,
                     path: map.path,
@@ -229,10 +233,10 @@ class MapLoader {
                 };
 
                 this.mapData.set(map.id, mapData);
-                console.log('✅ Datos del mapa cargados (simulado)');
+                console.log('Datos del mapa cargados (simulado)');
             }
         } catch (error) {
-            console.error('❌ Error al cargar datos del mapa:', error);
+            console.error('Error al cargar datos del mapa:', error);
             throw error;
         }
     }
@@ -542,41 +546,20 @@ class MapLoader {
             📏 Tamaño: ${mapData.worldSize ? `${mapData.worldSize.width}x${mapData.worldSize.depth}` : 'Desconocido'}
             🧩 Chunks: ${mapData.chunks ? mapData.chunks.size : 'N/A'}
             🏠 Casas: ${mapData.structures ? mapData.structures.houses.length : 0}
-            🌳 Árboles: ${mapData.structures ? mapData.structures.trees.length : 0}
         `;
 
         console.log(info);
         
-        // Mostrar notificación en el juego
-        this.showMapNotification(`🗺️ ${mapData.name} cargado`);
-    }
+        // Mostrar pantalla de juego
+        document.getElementById('gameScreen').style.display = 'block';
 
-    /**
-     * Muestra mensaje de carga
-     */
-    showLoadingMessage(message) {
-        const loadingDiv = document.createElement('div');
-        loadingDiv.id = 'mapLoadingMessage';
-        loadingDiv.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(139, 69, 19, 0.9);
-            color: #d4af37;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #d4af37;
-            font-family: 'Times New Roman', serif;
-            font-size: 16px;
-            z-index: 10000;
-            text-align: center;
-        `;
-        loadingDiv.innerHTML = `
-            <h3>🗺️ ${message}</h3>
-            <p>Por favor espera...</p>
-        `;
-        document.body.appendChild(loadingDiv);
+        // Inicializar el juego con el mapa
+        if (window.startGame) {
+            window.startGame();
+        }
+
+        // Oculta mensaje de carga
+        this.hideLoadingMessage();
     }
 
     /**
@@ -643,8 +626,14 @@ class MapLoader {
      * Obtiene los datos del mapa actual
      */
     getCurrentMapData() {
-        if (!this.currentMap) return null;
-        return this.mapData.get(this.currentMap.id);
+        return this.currentMap ? this.mapData.get(this.currentMap.id) : null;
+    }
+}
+
+// Funciones globales para compatibilidad
+function hideLoadingMessage() {
+    if (window.mapLoader) {
+        window.mapLoader.hideLoadingMessage();
     }
 }
 

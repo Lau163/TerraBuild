@@ -115,30 +115,35 @@
 
 	<!-- Menú Principal -->
 	<div id="mainMenu" class="medieval-menu">
-		<h1 class="menu-title">🏰 TerraBuild 🏰</h1>
+		<h1 class="menu-title">TerraBuild</h1>
 		<div class="menu-buttons">
 			<button class="menu-item" onclick="startOriginalGame()">
-				<span class="text">🎮 Jugar Original</span>
+				<span class="text">Jugar Original</span>
 				<span class="menu-item-background"></span>
 				<span class="menu-item-border"></span>
 			</button>
 			<button class="menu-item" onclick="startGame()">
-				<span class="text">🏰 Mundo Medieval</span>
+				<span class="text">Mundo Medieval</span>
+				<span class="menu-item-background"></span>
+				<span class="menu-item-border"></span>
+			</button>
+			<button class="menu-item" onclick="openCrafting()">
+				<span class="text">Fabricación</span>
 				<span class="menu-item-background"></span>
 				<span class="menu-item-border"></span>
 			</button>
 			<button class="menu-item" onclick="showOptions()">
-				<span class="text">⚙️ Opciones</span>
+				<span class="text">Opciones</span>
 				<span class="menu-item-background"></span>
 				<span class="menu-item-border"></span>
 			</button>
 			<button class="menu-item" onclick="showControls()">
-				<span class="text">🎮 Controles</span>
+				<span class="text">Controles</span>
 				<span class="menu-item-background"></span>
 				<span class="menu-item-border"></span>
 			</button>
 			<button class="menu-item" onclick="showCharacterSelection()">
-				<span class="text">👥 Elegir Personaje</span>
+				<span class="text">Elegir Personaje</span>
 				<span class="menu-item-background"></span>
 				<span class="menu-item-border"></span>
 			</button>
@@ -148,48 +153,48 @@
 	<!-- Pantalla de Selección de Personaje -->
 	<div id="characterSelectionScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 1000;">
 		<div class="medieval-menu" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; max-width: 90vw;">
-			<h2 class="menu-title">👥 Elige tu Personaje</h2>
+			<h2 class="menu-title">Elige tu Personaje</h2>
 			<div class="character-selection-container">
 				<div class="character-card" onclick="selectCharacter('P1')">
 					<div class="character-image">
 						<img src="assets/models/P1.png" alt="Personaje P1" style="width: 100px; height: 150px; object-fit: contain; border-radius: 10px;">
 					</div>
-					<h3>⚔️ Guerrero P1</h3>
+					<h3>Guerrero P1</h3>
 					<p>Valiente guerrero con gran fuerza y habilidades de combate cuerpo a cuerpo.</p>
 					<div class="character-stats">
-						<span>⚔️ Ataque: Alto</span>
-						<span>🛡️ Defensa: Media</span>
-						<span>🏃 Velocidad: Media</span>
+						<span>Ataque: Alto</span>
+						<span>Defensa: Media</span>
+						<span>Velocidad: Media</span>
 					</div>
 					<button class="select-btn" onclick="selectCharacter('P1')">
-					<span class="text">Elegir Guerrero</span>
-					<span class="menu-item-background"></span>
-					<span class="menu-item-border"></span>
-				</button>
+						<span class="text">Elegir Guerrero</span>
+						<span class="menu-item-background"></span>
+						<span class="menu-item-border"></span>
+					</button>
 				</div>
 				
 				<div class="character-card" onclick="selectCharacter('P2')">
 					<div class="character-image">
 						<img src="assets/models/P2.png" alt="Personaje P2" style="width: 100px; height: 150px; object-fit: contain; border-radius: 10px;">
 					</div>
-					<h3>🧙‍♂️ Mago P2</h3>
+					<h3>Mago P2</h3>
 					<p>Poderoso mago con hechizos elementales y gran conocimiento arcano.</p>
 					<div class="character-stats">
-						<span>🔥 Ataque: Mágico</span>
-						<span>🛡️ Defensa: Baja</span>
-						<span>🏃 Velocidad: Alta</span>
+						<span>Ataque: Mágico</span>
+						<span>Defensa: Baja</span>
+						<span>Velocidad: Alta</span>
 					</div>
 					<button class="select-btn" onclick="selectCharacter('P2')">
-					<span class="text">Elegir Mago</span>
-					<span class="menu-item-background"></span>
-					<span class="menu-item-border"></span>
-				</button>
+						<span class="text">Elegir Mago</span>
+						<span class="menu-item-background"></span>
+						<span class="menu-item-border"></span>
+					</button>
 				</div>
 			</div>
 			
 			<div class="selection-actions">
 				<button class="menu-item" onclick="backToMenuFromSelection()">
-					<span class="text">🔙 Volver al Menú</span>
+					<span class="text">Volver al Menú</span>
 					<span class="menu-item-background"></span>
 					<span class="menu-item-border"></span>
 				</button>
@@ -267,8 +272,13 @@
 			<span class="menu-item-background"></span>
 			<span class="menu-item-border"></span>
 		</button>
+		<button class="menu-item game-menu-btn" onclick="openCrafting()">
+			<span class="text">Fabricación</span>
+			<span class="menu-item-background"></span>
+			<span class="menu-item-border"></span>
+		</button>
 		<button class="menu-item game-menu-btn" onclick="toggleCameraAdjustments()">
-			<span class="text">⚙️ Ajustes</span>
+			<span class="text">Ajustes</span>
 			<span class="menu-item-background"></span>
 			<span class="menu-item-border"></span>
 		</button>
@@ -291,6 +301,12 @@
 		<script src="map-loader.js"></script>
 		<script src="minecraft-map-reader.js"></script>
 		<script src="game-system.js"></script>
+		<script src="crafting-system.js"></script>
+		<script src="crafting-ui.js"></script>
+		<script src="crafting-demo.js"></script>
+		<script src="map-validator.js"></script>
+		<script src="terra-build-integration.js"></script>
+		<script src="game-tester.js"></script>
 
 		<script type="module">
 
@@ -1516,7 +1532,7 @@
 					window.gameSystem.start().then(success => {
 						if (success) {
 							console.log('✅ Juego iniciado correctamente');
-							showGameMessage('🏰 ¡Bienvenido a TerraBuild! 🏰\n\n🎮 Usa el mouse para mover la cámara\n📍 E: Interactuar\n🔄 V: Cambiar vista\n🏠 Menú: Volver al menú principal');
+							showGameMessage('¡Bienvenido a TerraBuild!\n\nUsa el mouse para mover la cámara\nE: Interactuar\nV: Cambiar vista\nMenú: Volver al menú principal');
 						} else {
 							console.error('❌ Error al iniciar el juego');
 							showGameMessage('❌ Error al iniciar el juego');
@@ -1752,7 +1768,7 @@
 			};
 
 			window.showControls = function() {
-				alert('🎮 CONTROLES TERRABUILD\n\n🏹 MUNDO ORIGINAL:\n• Clic izquierdo: Avanzar\n• Clic derecho: Retroceder\n• Movimiento libre con mouse\n\n🏰 MUNDO MEDIEVAL:\n• Cámara automática rotativa\n• Observa el castillo y estructuras\n\n📷 CÁMARA:\n• V: Cambiar entre 1ra/3ra persona\n• Botón "🔄 Cambiar Vista": Cambiar modo\n• Botón "🎯 Resetear": Resetear posición\n• Botón "⚙️ Ajustes": Mostrar ajustes finos\n• Q/E: Ajustar cámara lateral (3ra persona)\n• R/F: Ajustar cámara altura (3ra persona)\n• W/S: Ajustar cámara distancia (3ra persona)\n\n🏠 VUELTA AL MENÚ:\n• Botón "Menú" en esquina superior derecha\n\n🎒 INTERACCIÓN:\n• E: Interactuar con personajes/objetos\n• I: Mostrar inventario');
+				alert('CONTROLES TERRABUILD\n\nMUNDO ORIGINAL:\n· Clic izquierdo: Avanzar\n· Clic derecho: Retroceder\n· Movimiento libre con mouse\n\nMUNDO MEDIEVAL:\n· Cámara automática rotativa\n· Observa el castillo y estructuras\n\nCÁMARA:\n· V: Cambiar entre 1ra/3ra persona\n· Boton "Cambiar Vista": Cambiar modo\n· Boton "Resetear": Resetear posición\n· Boton "Ajustes": Mostrar ajustes finos\n· Q/E: Ajustar cámara lateral (3ra persona)\n· R/F: Ajustar cámara altura (3ra persona)\n· W/S: Ajustar cámara distancia (3ra persona)\n\nFABRICACIÓN:\n· Boton "Fabricación": Abrir mesa de trabajo\n· Arrastra materiales al grid\n· Clic en slots para limpiar\n· ESC: Cerrar interfaz\n\nVUELTA AL MENÚ:\n· Boton "Menú" en esquina superior derecha\n\nINTERACCIÓN:\n· E: Interactuar con personajes/objetos\n· I: Mostrar inventario');
 			};
 
 			// Función para alternar entre mundos
