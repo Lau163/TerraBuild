@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-04-09T20:30:00.000Z",
+  "compression_stats": {
+    "total_original_size": 54200000,
+    "total_compressed_size": 13740354,
+    "compression_ratio": 0.253,
+    "space_saved": 40459646,
+    "maps_processed": 2,
+    "compression_percentage": 74.7
+  },
+  "maps": [
+    {
+      "id": "medieval_house_01",
+      "name": "Casa Medieval 01",
+      "original_size": 37600000,
+      "original_size_mb": "37.6",
+      "compressed_size": 1939448,
+      "compressed_size_mb": "1.9",
+      "compression_ratio": 0.052,
+      "space_saved": 35660552,
+      "compression_percentage": 94.8,
+      "original_files": 50,
+      "compressed_files": 40,
+      "estimated_load_time_original": 38,
+      "estimated_load_time_compressed": 2,
+      "zip_file": "Casa_Medieval_01.zip"
+    },
+    {
+      "id": "medieval_mansion",
+      "name": "Mansión Medieval",
+      "original_size": 16600000,
+      "original_size_mb": "16.6",
+      "compressed_size": 11800906,
+      "compressed_size_mb": "11.3",
+      "compression_ratio": 0.711,
+      "space_saved": 4799094,
+      "compression_percentage": 28.9,
+      "original_files": 19,
+      "compressed_files": 15,
+      "estimated_load_time_original": 17,
+      "estimated_load_time_compressed": 12,
+      "zip_file": "Mansion_Medieval.zip"
+    }
+  ],
+  "failed_compressions": [
+    {
+      "id": "mountain_village",
+      "name": "Pueblo de Montaña",
+      "original_size": 61600000,
+      "original_size_mb": "61.6",
+      "error": "Espacio en disco insuficiente",
+      "target_zip": "Pueblo_Montana.zip"
+    },
+    {
+      "id": "beauclair_palace",
+      "name": "Palacio Beauclair",
+      "original_size": 208000000,
+      "original_size_mb": "208.0",
+      "error": "Espacio en disco insuficiente",
+      "target_zip": "Palacio_Beauclair.zip"
+    }
+  ],
+  "benefits": {
+    "download_speed": "74.7% más rápido",
+    "storage_space": "40.5 MB ahorrados",
+    "load_times": "Promedio 20.5s más rápido",
+    "distribution": "Archivos más pequeños para compartir"
+  },
+  "recommendations": [
+    "Liberar espacio en disco para comprimir mapas grandes",
+    "Considerar compresión por partes para mapas > 50MB",
+    "Implementar descarga progresiva para mapas grandes",
+    "Usar niveles de compresión variables según el tipo de mapa"
+  ]
+}
