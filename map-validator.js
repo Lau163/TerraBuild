@@ -72,15 +72,21 @@ class MapValidator {
             }
 
             // 3. Analizar archivos de región
+            let regionAnalysis = null;
             if (essentialFiles.regionDir) {
-                const regionAnalysis = await this.analyzeRegions(map.path);
-                result.details.regions = regionAnalysis;
-                
-                if (regionAnalysis.count === 0) {
-                    result.errors.push('No se encontraron archivos de región (.mca)');
-                } else {
-                    console.log(`  Encontrados ${regionAnalysis.count} archivos de región`);
-                    console.log(`  Tamaño total: ${regionAnalysis.totalSizeMB.toFixed(2)} MB`);
+                try {
+                    regionAnalysis = await this.analyzeRegions(map.path);
+                    result.details.regions = regionAnalysis;
+                    
+                    if (regionAnalysis && regionAnalysis.count === 0) {
+                        result.errors.push('No se encontraron archivos de región (.mca)');
+                    } else if (regionAnalysis) {
+                        console.log(`  Encontrados ${regionAnalysis.count} archivos de región`);
+                        console.log(`  Tamaño total: ${regionAnalysis.totalSizeMB.toFixed(2)} MB`);
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error analizando regiones:', error);
+                    regionAnalysis = null;
                 }
             }
 
@@ -89,8 +95,20 @@ class MapValidator {
             result.details.worldData = worldData;
 
             // 5. Calcular estadísticas del mapa
-            const statistics = await this.calculateMapStatistics(map.path, regionAnalysis);
-            result.details.statistics = statistics;
+            if (regionAnalysis) {
+                const statistics = await this.calculateMapStatistics(map.path, regionAnalysis);
+                result.details.statistics = statistics;
+            } else {
+                result.details.statistics = {
+                    totalRegions: 0,
+                    estimatedChunks: 0,
+                    worldSizeBlocks: 0,
+                    worldSizeKM: 0,
+                    fileSizeMB: 0,
+                    compressionRatio: 0,
+                    loadTimeEstimate: 'N/A'
+                };
+            }
 
             // 6. Determinar si el mapa es válido
             result.isValid = result.errors.length === 0;

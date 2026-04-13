@@ -640,64 +640,7 @@ window.initMedievalWorld = async function(containerId = 'container') {
         console.error('❌ Error crítico al cargar Mundo Medieval:', error);
         return null;
     }
-
-    // Limpiar recursos del mundo
-    cleanup() {
-        console.log('🧹 Limpiando mundo medieval...');
-        
-        // Detener animación
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-        }
-        
-        // Limpiar escena
-        if (this.scene) {
-            this.scene.traverse((child) => {
-                if (child.geometry) child.geometry.dispose();
-                if (child.material) {
-                    if (Array.isArray(child.material)) {
-                        child.material.forEach(material => material.dispose());
-                    } else {
-                        child.material.dispose();
-                    }
-                }
-            });
-            this.scene.clear();
-        }
-        
-        // Limpiar renderer
-        if (this.renderer) {
-            this.renderer.dispose();
-        }
-        
-        // Limpiar container
-        if (this.container) {
-            this.container.innerHTML = '';
-        }
-        
-        // Restablecer estado
-        this.isInitialized = false;
-        this.entities = [];
-        
-        console.log('✅ Mundo medieval limpiado');
-    }
-
-    // Alternar modo de cámara
-    toggleCameraMode() {
-        this.cameraMode = this.cameraMode === 'third' ? 'first' : 'third';
-        console.log('📷 Cambiando a modo:', this.cameraMode);
-        
-        if (this.cameraMode === 'first') {
-            // Modo primera persona
-            this.camera.position.set(0, 5, 0);
-            this.cameraTarget = new THREE.Vector3(0, 5, 10);
-        } else {
-            // Modo tercera persona
-            this.camera.position.set(15, 15, 15);
-            this.cameraTarget = new THREE.Vector3(0, 0, 0);
-        }
-    }
-}
+};
 
 // Función para obtener el mundo medieval
 window.getMedievalWorld = function() {
