@@ -581,13 +581,16 @@
 					document.getElementById('characterSelectionScreen').style.display = 'none';
 					
 					// Mostrar selección de mapa
-					if (window.mapLoader) {
-						window.mapLoader.showMapSelector();
-					} else {
-						console.error('MapLoader no está disponible');
-						alert('Error: Sistema de mapas no disponible');
-						document.getElementById('mainMenu').style.display = 'block';
-					}
+					// Esperar a que mapLoader esté disponible
+					const waitForMapLoader = () => {
+						if (window.mapLoader) {
+							window.mapLoader.showMapSelector();
+						} else {
+							console.log('Esperando mapLoader...');
+							setTimeout(waitForMapLoader, 100);
+						}
+					};
+					waitForMapLoader();
 				} else {
 					console.log('Usuario canceló la selección');
 				}

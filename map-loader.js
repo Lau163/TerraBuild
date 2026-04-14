@@ -199,42 +199,25 @@ class MapLoader {
         console.log(`Cargando datos del mapa desde: ${map.path}`);
         
         try {
-            // Usar el lector real de mapas de Minecraft
-            if (window.minecraftMapReader) {
-                console.log('Usando lector real de mapas de Minecraft...');
-                
-                // Procesar las regiones del mapa
-                const processedChunks = await window.minecraftMapReader.processMapRegion(map.path);
-                
-                // Generar estructuras
-                const structures = window.minecraftMapReader.generateStructures(map.path);
-                
-                const mapData = {
-                    name: map.name,
-                    path: map.path,
-                    chunks: processedChunks,
-                    structures: structures,
-                    spawnPoint: { x: 0, y: 10, z: 0 },
-                    worldSize: this.calculateWorldSize(processedChunks)
-                };
+            // Método directo sin dependencias externas
+            console.log('Usando método directo de carga...');
+            
+            // Datos básicos del mapa
+            const mapData = {
+                name: map.name,
+                path: map.path,
+                difficulty: map.difficulty,
+                size: map.size,
+                regions: map.regions,
+                worldSize: map.worldSize,
+                spawnPoint: { x: 0, y: 10, z: 0 },
+                loaded: true
+            };
 
-                this.mapData.set(map.id, mapData);
-                console.log('Datos del mapa cargados con lector real');
-                console.log(`${processedChunks.size} chunks procesados`);
-            } else {
-                // Fallback al método simulado
-                console.log('Usando método simulado (lector no disponible)');
-                const mapData = {
-                    name: map.name,
-                    path: map.path,
-                    terrain: this.generateTerrainFromMinecraftMap(map),
-                    structures: this.generateStructuresFromMinecraftMap(map),
-                    spawnPoint: { x: 0, y: 10, z: 0 }
-                };
-
-                this.mapData.set(map.id, mapData);
-                console.log('Datos del mapa cargados (simulado)');
-            }
+            this.mapData.set(map.id, mapData);
+            console.log('Datos del mapa cargados exitosamente');
+            console.log(`Mapa: ${map.name} (${map.size} - ${map.difficulty})`);
+            
         } catch (error) {
             console.error('Error al cargar datos del mapa:', error);
             throw error;
@@ -394,8 +377,14 @@ class MapLoader {
     startGameWithCharacterAndMap() {
         console.log('Iniciando juego con personaje y mapa seleccionados...');
         
+        // Ocultar mensaje de carga inmediatamente
+        this.hideLoadingMessage();
+        
         // Ocultar selector de mapas
-        document.getElementById('mapSelectorScreen').style.display = 'none';
+        const mapSelectorScreen = document.getElementById('mapSelectorScreen');
+        if (mapSelectorScreen) {
+            mapSelectorScreen.style.display = 'none';
+        }
 
         // Mostrar pantalla de juego
         document.getElementById('gameScreen').style.display = 'block';
@@ -404,26 +393,42 @@ class MapLoader {
         const selectedCharacter = localStorage.getItem('selectedCharacter');
         if (!selectedCharacter) {
             console.warn('No hay personaje seleccionado, iniciando juego normal');
-            if (window.startGame) {
-                window.startGame();
+            try {
+                if (window.startGame) {
+                    window.startGame();
+                } else {
+                    console.error('startGame no disponible');
+                    alert('Error: Sistema de juego no disponible');
+                }
+            } catch (error) {
+                console.error('Error al iniciar juego normal:', error);
+                alert('Error al iniciar el juego: ' + error.message);
             }
         } else {
             console.log(`Iniciando juego con personaje: ${selectedCharacter}`);
             // Iniciar juego con personaje seleccionado
-            if (window.startGameWithSelectedCharacter) {
-                window.startGameWithSelectedCharacter();
-            } else {
-                console.warn('startGameWithSelectedCharacter no disponible, iniciando juego normal');
-                if (window.startGame) {
-                    window.startGame();
+            try {
+                if (window.startGameWithSelectedCharacter) {
+                    window.startGameWithSelectedCharacter();
+                } else {
+                    console.warn('startGameWithSelectedCharacter no disponible, iniciando juego normal');
+                    if (window.startGame) {
+                        window.startGame();
+                    } else {
+                        console.error('startGame no disponible');
+                        alert('Error: Sistema de juego no disponible');
+                    }
                 }
+            } catch (error) {
+                console.error('Error al iniciar juego con personaje:', error);
+                alert('Error al iniciar el juego con personaje: ' + error.message);
             }
         }
 
         // Aplicar configuración del mapa
         this.applyMapConfiguration();
-
-        this.hideLoadingMessage();
+        
+        console.log('Juego iniciado con personaje y mapa seleccionados');
     }
 
     /**
@@ -451,37 +456,51 @@ class MapLoader {
      * Aplica la configuración del mapa al juego
      */
     applyMapConfiguration() {
-        if (!this.currentMap) {
-            console.warn('⚠️ No hay mapa seleccionado para aplicar configuración');
-            return;
+        try {
+            if (!this.currentMap) {
+                console.warn('⚠️ No hay mapa seleccionado para aplicar configuración');
+                return;
+            }
+
+            const mapData = this.mapData.get(this.currentMap.id);
+            if (!mapData) {
+                console.warn('⚠️ No hay datos del mapa para aplicar configuración');
+                return;
+            }
+
+            console.log('🎮 Aplicando configuración del mapa:', this.currentMap.name);
+            console.log('📊 Datos del mapa:', mapData);
+
+            // Si tenemos chunks procesados, los aplicamos al mundo
+            if (mapData.chunks && mapData.chunks.size > 0) {
+                this.applyMinecraftChunks(mapData);
+            } else {
+                // Aplicar configuración básica del mapa
+                this.applyBasicMapConfiguration(mapData);
+            }
+
+            console.log('✅ Configuración del mapa aplicada exitosamente');
+        } catch (error) {
+            console.error('❌ Error al aplicar configuración del mapa:', error);
+            // No mostrar alert para no interrumpir el flujo
+            console.log('Continuando con configuración por defecto...');
         }
+    }
 
-        const mapData = this.mapData.get(this.currentMap.id);
-        if (!mapData) {
-            console.warn('⚠️ No hay datos del mapa para aplicar configuración');
-            return;
-        }
-
-        console.log('🎮 Aplicando configuración del mapa:', this.currentMap.name);
-        console.log('📊 Datos del mapa:', mapData);
-
-        // Si tenemos chunks procesados, los aplicamos al mundo
-        if (mapData.chunks && mapData.chunks.size > 0) {
-            this.applyMinecraftChunks(mapData);
-        }
-
-        // Aplicar estructuras
-        if (mapData.structures) {
-            this.applyMapStructures(mapData.structures);
-        }
-
-        // Configurar spawn point
-        if (mapData.spawnPoint) {
-            this.setSpawnPoint(mapData.spawnPoint);
-        }
-
-        // Mostrar información del mapa
-        this.showMapInfo(mapData);
+    /**
+     * Muestra información del mapa
+     */
+    showMapInfo(mapData) {
+        if (!mapData) return;
+        
+        console.log('🗺️ Información del mapa:', mapData.name);
+        console.log('📊 Detalles:', {
+            difficulty: mapData.difficulty,
+            size: mapData.size,
+            regions: mapData.regions,
+            worldSize: mapData.worldSize
+        });
+    }
     }
 
     /**
