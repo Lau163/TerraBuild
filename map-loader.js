@@ -413,10 +413,16 @@ class MapLoader {
      * Aplica la configuración del mapa al juego
      */
     applyMapConfiguration() {
-        if (!this.currentMap) return;
+        if (!this.currentMap) {
+            console.warn('⚠️ No hay mapa seleccionado para aplicar configuración');
+            return;
+        }
 
         const mapData = this.mapData.get(this.currentMap.id);
-        if (!mapData) return;
+        if (!mapData) {
+            console.warn('⚠️ No hay datos del mapa para aplicar configuración');
+            return;
+        }
 
         console.log('🎮 Aplicando configuración del mapa:', this.currentMap.name);
         console.log('📊 Datos del mapa:', mapData);
@@ -560,6 +566,43 @@ class MapLoader {
 
         // Oculta mensaje de carga
         this.hideLoadingMessage();
+    }
+
+    /**
+     * Muestra mensaje de carga
+     */
+    showLoadingMessage(message) {
+        // Eliminar mensaje anterior si existe
+        const existingMessage = document.getElementById('mapLoadingMessage');
+        if (existingMessage) {
+            document.body.removeChild(existingMessage);
+        }
+
+        // Crear nuevo mensaje de carga
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'mapLoadingMessage';
+        loadingDiv.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #d4af37;
+            padding: 20px 30px;
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+            z-index: 10000;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        `;
+        loadingDiv.innerHTML = `
+            <div style="margin-bottom: 10px;">🏰</div>
+            <div>${message}</div>
+            <div style="margin-top: 10px; font-size: 12px; color: #f4e4c1;">Por favor espera...</div>
+        `;
+        document.body.appendChild(loadingDiv);
     }
 
     /**

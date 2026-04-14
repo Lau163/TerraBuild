@@ -153,7 +153,7 @@ class TerraBuildIntegration {
             { name: 'CraftingSystem', check: () => window.craftingSystem && window.craftingSystem.recipes },
             { name: 'CraftingUI', check: () => window.craftingUI },
             { name: 'GameSystem', check: () => window.gameSystem },
-            { name: 'MedievalWorld', check: () => window.medievalWorld }
+            { name: 'MedievalWorld', check: () => window.initMedievalWorld }
         ];
         
         let passed = 0;

@@ -551,11 +551,9 @@ body {
 @supports (-webkit-mask-box-image: inherit) or (mask-border: inherit) {
   .menu-item-border {
     background-image: linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
-    -webkit-mask-box-image-source: url("../img/baldurs-gate-3-border.svg");
     -webkit-mask-box-image-slice: 15 23;
     -webkit-mask-box-image-width: 15px 23px;
     -webkit-mask-box-image-repeat: repeat;
-    mask-border-source: url("../img/baldurs-gate-3-border.svg");
     mask-border-slice: 15 23;
     mask-border-width: 15px 23px;
     mask-border-repeat: repeat;
@@ -567,14 +565,9 @@ body {
     border-width: 15px 23px;
     border-style: solid;
     border-color: transparent;
-    border-image-source: url("../img/baldurs-gate-3-border-inverted.svg");
     border-image-slice: 15 23;
     border-image-width: 15px 23px;
     border-image-repeat: repeat;
-    background-image: linear-gradient(#000, #000), linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
-    background-origin: content-box, border-box;
-    background-repeat: no-repeat;
-    filter: url("#remove-black-button-13");
   }
 }
 
@@ -851,11 +844,9 @@ body {
 @supports (-webkit-mask-box-image: inherit) or (mask-border: inherit) {
   .select-btn-border {
     background-image: linear-gradient(to bottom, #bb9d7a 50%, #806d56 50%);
-    -webkit-mask-box-image-source: url("../img/baldurs-gate-3-border.svg");
     -webkit-mask-box-image-slice: 15 23;
     -webkit-mask-box-image-width: 15px 23px;
     -webkit-mask-box-image-repeat: repeat;
-    mask-border-source: url("../img/baldurs-gate-3-border.svg");
     mask-border-slice: 15 23;
     mask-border-width: 15px 23px;
     mask-border-repeat: repeat;
@@ -867,7 +858,6 @@ body {
     border-width: 15px 23px;
     border-style: solid;
     border-color: transparent;
-    border-image-source: url("../img/baldurs-gate-3-border-inverted.svg");
     border-image-slice: 15 23;
     border-image-width: 15px 23px;
     border-image-repeat: repeat;

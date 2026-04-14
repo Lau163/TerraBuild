@@ -9,7 +9,7 @@
 	<meta name="author" content="TerraBuild Team">
 	
 	<!-- Optimizaciones para móviles -->
-	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="format-detection" content="telephone=no">
 	
@@ -305,8 +305,24 @@
 		<script src="crafting-ui.js"></script>
 		<script src="crafting-demo.js"></script>
 		<script src="map-validator.js"></script>
-		<script src="terra-build-integration.js"></script>
 		<script src="game-tester.js"></script>
+
+		<!-- Importar módulos ES6 -->
+		<script type="module">
+			import './medieval-world.js';
+			
+			// Hacer THREE disponible globalmente
+			import * as THREE from 'three';
+			window.THREE = THREE;
+			
+			// Cargar terra-build-integration.js después de que THREE.js esté disponible
+			const script = document.createElement('script');
+			script.src = 'terra-build-integration.js';
+			script.onload = () => {
+				console.log('✅ TerraBuild Integration cargado con THREE.js disponible');
+			};
+			document.head.appendChild(script);
+		</script>
 		<script src="map-compressor.js"></script>
 		<script src="map-downloader.js"></script>
 
@@ -1223,6 +1239,19 @@
 			// Función para crear entidades medievales en el mundo
 			window.crearEntidadesMedievales = function() {
 				console.log('🏰 Creando entidades medievales alternativas...');
+				
+				// Obtener la escena correcta del contexto
+				let scene = null;
+				if (window.medievalWorld && window.medievalWorld.scene) {
+					scene = window.medievalWorld.scene;
+				} else if (typeof scene !== 'undefined') {
+					scene = window.scene;
+				}
+				
+				if (!scene) {
+					console.warn('⚠️ No se encontró la escena para crear entidades medievales');
+					return;
+				}
 				
 				// Sistema de alternativas para personajes
 				const crearAlternativaCaballero = (position) => {
