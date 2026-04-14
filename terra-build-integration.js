@@ -448,18 +448,16 @@ window.terraBuild = new TerraBuildIntegration();
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM listo, iniciando TerraBuild...');
     
-    // Esperar un momento para que todos los scripts se carguen
-    setTimeout(async () => {
+    // Inicializar inmediatamente sin retrasos
+    (async () => {
         const success = await window.terraBuild.initializeAll();
         
         if (success) {
             console.log('TerraBuild está listo para jugar');
-            // Mostrar mensaje de bienvenida
-            setTimeout(() => {
-                window.terraBuild.showGameMessage('¡TerraBuild está listo!\n\nSelecciona una opción del menú principal');
-            }, 1000);
+            // Mostrar mensaje de bienvenida inmediato
+            window.terraBuild.showGameMessage('¡TerraBuild está listo!\n\nSelecciona una opción del menú principal');
         }
-    }, 1000);
+    })();
 });
 
 // Prevenir errores de consola

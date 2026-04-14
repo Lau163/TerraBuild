@@ -573,15 +573,24 @@
 				// Guardar selección en localStorage
 				localStorage.setItem('selectedCharacter', characterType);
 				
-				// Mostrar mensaje de confirmación
-				setTimeout(() => {
-					if (confirm(`🎮 ¿Iniciar juego como ${characterNames[characterType]}?\n\n${characterDescriptions[characterType]}`)) {
-						console.log('🚀 Iniciando juego con personaje seleccionado');
-						startGameWithSelectedCharacter();
+				// Mostrar mensaje de confirmación inmediato
+				if (confirm(`¿Seleccionar ${characterNames[characterType]}?\n\n${characterDescriptions[characterType]}\n\nDespués podrás elegir un mapa para iniciar el juego.`)) {
+					console.log('Personaje seleccionado, mostrando selección de mapa');
+					
+					// Ocultar pantalla de selección de personaje
+					document.getElementById('characterSelectionScreen').style.display = 'none';
+					
+					// Mostrar selección de mapa
+					if (window.mapLoader) {
+						window.mapLoader.showMapSelector();
 					} else {
-						console.log('❌ Usuario canceló la selección');
+						console.error('MapLoader no está disponible');
+						alert('Error: Sistema de mapas no disponible');
+						document.getElementById('mainMenu').style.display = 'block';
 					}
-				}, 300);
+				} else {
+					console.log('Usuario canceló la selección');
+				}
 			};
 
 			// Función para iniciar juego con personaje seleccionado
@@ -664,76 +673,71 @@
 					}
 				}
 				
-				// Inicializar sistemas y cargar personaje seleccionado
-				console.log('⏰ Programando carga de sistemas en 2 segundos...');
-				setTimeout(() => {
-					console.log('🚀 Iniciando carga de sistemas...');
-					try {
-						console.log('📦 1. Inicializando EntityManager...');
-						initEntityManager();
-						
-						console.log('📦 2. Inicializando CharacterLoader...');
-						initCharacterLoader();
-						
-						console.log('📦 3. Cargando objetos recolectables...');
-						cargarObjetosRecolectables();
-						
-						console.log('📦 4. Cargando personaje seleccionado...');
-						cargarPersonajeSeleccionado();
-						
-						console.log('✅ Todos los sistemas iniciados correctamente');
-						
-						// Verificar y asegurar visibilidad del panel de cámara
-						const cameraPanelCheck = document.querySelector('.camera-control-panel');
-						if (cameraPanelCheck) {
-							cameraPanelCheck.style.display = 'block';
-							cameraPanelCheck.style.visibility = 'visible';
-							cameraPanelCheck.style.opacity = '1';
-							cameraPanelCheck.style.zIndex = '100';
-							console.log('📷 Panel de cámara verificado y asegurado visible');
-						}
-						
-						// Quitar mensaje de carga
-						setTimeout(() => {
-							if (document.getElementById('game-loading')) {
-								document.body.removeChild(loadingMessage);
-							}
-							console.log('🎉 ¡Juego listo! Ahora puedes usar los botones de cámara.');
-							
-							// Mostrar notificación de éxito
-							const successMessage = document.createElement('div');
-							successMessage.style.cssText = `
-								position: fixed;
-								top: 20px;
-								left: 50%;
-								transform: translateX(-50%);
-								background: rgba(0, 128, 0, 0.8);
-								color: white;
-								padding: 15px 25px;
-								border-radius: 8px;
-								font-family: 'Times New Roman', serif;
-								font-size: 14px;
-								z-index: 10000;
-								animation: fadeInOut 3s ease-in-out;
-							`;
-							successMessage.textContent = '✅ ¡Personaje cargado! Usa los botones de cámara abajo a la izquierda.';
-							document.body.appendChild(successMessage);
-							
-							setTimeout(() => {
-								if (document.body.contains(successMessage)) {
-									document.body.removeChild(successMessage);
-								}
-							}, 3000);
-						}, 1000);
-						
-					} catch (error) {
-						console.error('❌ Error al cargar sistemas:', error);
-						alert('❌ Error al cargar los sistemas del juego: ' + error.message);
-						if (document.getElementById('game-loading')) {
-							document.body.removeChild(loadingMessage);
-						}
+				// Inicializar sistemas y cargar personaje seleccionado inmediatamente
+				console.log('Iniciando carga de sistemas...');
+				try {
+					console.log('1. Inicializando EntityManager...');
+					initEntityManager();
+					
+					console.log('2. Inicializando CharacterLoader...');
+					initCharacterLoader();
+					
+					console.log('3. Cargando objetos recolectables...');
+					cargarObjetosRecolectables();
+					
+					console.log('4. Cargando personaje seleccionado...');
+					cargarPersonajeSeleccionado();
+					
+					console.log('Todos los sistemas iniciados correctamente');
+					
+					// Verificar y asegurar visibilidad del panel de cámara
+					const cameraPanelCheck = document.querySelector('.camera-control-panel');
+					if (cameraPanelCheck) {
+						cameraPanelCheck.style.display = 'block';
+						cameraPanelCheck.style.visibility = 'visible';
+						cameraPanelCheck.style.opacity = '1';
+						cameraPanelCheck.style.zIndex = '100';
+						console.log('Panel de cámara verificado y asegurado visible');
 					}
-				}, 2000);
+					
+					// Quitar mensaje de carga rápidamente
+					if (document.getElementById('game-loading')) {
+						document.body.removeChild(loadingMessage);
+					}
+					console.log('¡Juego listo! Ahora puedes usar los botones de cámara.');
+					
+					// Mostrar notificación de éxito inmediata
+					const successMessage = document.createElement('div');
+					successMessage.style.cssText = `
+						position: fixed;
+						top: 20px;
+						left: 50%;
+						transform: translateX(-50%);
+						background: rgba(0, 128, 0, 0.8);
+						color: white;
+						padding: 15px 25px;
+						border-radius: 8px;
+						font-family: 'Times New Roman', serif;
+						font-size: 14px;
+						z-index: 10000;
+						animation: fadeInOut 2s ease-in-out;
+					`;
+					successMessage.textContent = '¡Personaje cargado! Usa los botones de cámara abajo a la izquierda.';
+					document.body.appendChild(successMessage);
+					
+					setTimeout(() => {
+						if (document.body.contains(successMessage)) {
+							document.body.removeChild(successMessage);
+						}
+					}, 2000);
+					
+				} catch (error) {
+					console.error('Error al cargar sistemas:', error);
+					alert('Error al cargar los sistemas del juego: ' + error.message);
+					if (document.getElementById('game-loading')) {
+						document.body.removeChild(loadingMessage);
+					}
+				}
 				
 				console.log('🎬 Iniciando bucle de animación...');
 				animate();
@@ -1238,18 +1242,50 @@
 
 			// Función para crear entidades medievales en el mundo
 			window.crearEntidadesMedievales = function() {
-				console.log('🏰 Creando entidades medievales alternativas...');
+				console.log(' Creando entidades medievales alternativas...');
 				
 				// Obtener la escena correcta del contexto
 				let scene = null;
+				
+				// Intentar múltiples fuentes para encontrar la escena
 				if (window.medievalWorld && window.medievalWorld.scene) {
 					scene = window.medievalWorld.scene;
-				} else if (typeof scene !== 'undefined') {
+					console.log('Escena encontrada en window.medievalWorld.scene');
+				} else if (typeof scene !== 'undefined' && scene) {
 					scene = window.scene;
+					console.log('Escena encontrada en window.scene');
+				} else if (typeof window.scene !== 'undefined' && window.scene) {
+					scene = window.scene;
+					console.log('Escena encontrada en window.scene (global)');
+				} else if (window.THREE && typeof window.scene !== 'undefined') {
+					// Intentar obtener escena del renderer
+					const container = document.getElementById('container');
+					if (container && container.children.length > 0) {
+						// Buscar escena en el contexto del renderer
+						const renderer = container.querySelector('canvas');
+						if (renderer && renderer.userData && renderer.userData.scene) {
+							scene = renderer.userData.scene;
+							console.log('Escena encontrada en renderer.userData.scene');
+						}
+					}
+				}
+				
+				// Último intento: buscar en el contexto global
+				if (!scene && typeof window.scene !== 'undefined') {
+					scene = window.scene;
+					console.log('Escena encontrada como fallback');
 				}
 				
 				if (!scene) {
-					console.warn('⚠️ No se encontró la escena para crear entidades medievales');
+					console.warn('No se encontró la escena para crear entidades medievales');
+					console.log('Contextos disponibles:', {
+						windowMedievalWorld: !!window.medievalWorld,
+						windowMedievalWorldScene: !!(window.medievalWorld && window.medievalWorld.scene),
+						windowScene: !!window.scene,
+						globalScene: typeof scene !== 'undefined',
+						threeAvailable: !!window.THREE,
+						containerExists: !!document.getElementById('container')
+					});
 					return;
 				}
 				
@@ -1940,18 +1976,29 @@
 				//
 
 				const geometries = [];
+				const renderDistance = 50; // Distancia de renderizado para mundo infinito
 
-				console.log('🌊 Generando terreno con Perlin noise...');
-				for ( let z = 0; z < worldDepth; z ++ ) {
+				console.log('🌊 Generando terreno infinito con Perlin noise...');
+				
+				// Obtener posición del jugador para generar terreno alrededor
+				let playerX = 0;
+				let playerZ = 0;
+				if (camera) {
+					playerX = Math.floor(camera.position.x / 100);
+					playerZ = Math.floor(camera.position.z / 100);
+				}
 
-					for ( let x = 0; x < worldWidth; x ++ ) {
+				// Generar terreno en un área más grande que la distancia de renderizado
+				for ( let z = playerZ - renderDistance; z <= playerZ + renderDistance; z ++ ) {
+
+					for ( let x = playerX - renderDistance; x <= playerX + renderDistance; x ++ ) {
 
 						const h = getY( x, z );
 
 						matrix.makeTranslation(
-							x * 100 - worldHalfWidth * 100,
+							x * 100,
 							h * 100,
-							z * 100 - worldHalfDepth * 100
+							z * 100
 						);
 
 						const px = getY( x + 1, z );
@@ -1961,25 +2008,25 @@
 
 						geometries.push( pyGeometry.clone().applyMatrix4( matrix ) );
 
-						if ( ( px !== h && px !== h + 1 ) || x === 0 ) {
+						if ( ( px !== h && px !== h + 1 ) ) {
 
 							geometries.push( pxGeometry.clone().applyMatrix4( matrix ) );
 
 						}
 
-						if ( ( nx !== h && nx !== h + 1 ) || x === worldWidth - 1 ) {
+						if ( ( nx !== h && nx !== h + 1 ) ) {
 
 							geometries.push( nxGeometry.clone().applyMatrix4( matrix ) );
 
 						}
 
-						if ( ( pz !== h && pz !== h + 1 ) || z === worldDepth - 1 ) {
+						if ( ( pz !== h && pz !== h + 1 ) ) {
 
 							geometries.push( pzGeometry.clone().applyMatrix4( matrix ) );
 
 						}
 
-						if ( ( nz !== h && nz !== h + 1 ) || z === 0 ) {
+						if ( ( nz !== h && nz !== h + 1 ) ) {
 
 							geometries.push( nzGeometry.clone().applyMatrix4( matrix ) );
 
@@ -2166,7 +2213,11 @@
 
 			function getY( x, z ) {
 
-				return ( data[ x + z * worldWidth ] * 0.15 ) | 0;
+				// Usar coordenadas modulares para terreno infinito
+				const modX = ((x % worldWidth) + worldWidth) % worldWidth;
+				const modZ = ((z % worldDepth) + worldDepth) % worldDepth;
+				
+				return ( data[ modX + modZ * worldWidth ] * 0.15 ) | 0;
 
 			}
 

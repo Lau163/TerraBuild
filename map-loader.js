@@ -183,12 +183,12 @@ class MapLoader {
             // Cargar datos del mapa
             await this.loadMapData(map);
             
-            // Iniciar el juego con el mapa seleccionado
-            this.startGameWithMap();
+            // Iniciar el juego con personaje y mapa seleccionados
+            this.startGameWithCharacterAndMap();
         } catch (error) {
-            console.error('❌ Error al cargar el mapa:', error);
+            console.error('Error al cargar el mapa:', error);
             this.hideLoadingMessage();
-            alert('❌ Error al cargar el mapa. Por favor, intenta de nuevo.');
+            alert('Error al cargar el mapa. Por favor, intenta de nuevo.');
         }
     }
 
@@ -389,7 +389,45 @@ class MapLoader {
     }
 
     /**
-     * Inicia el juego con el mapa seleccionado
+     * Inicia el juego con personaje y mapa seleccionados
+     */
+    startGameWithCharacterAndMap() {
+        console.log('Iniciando juego con personaje y mapa seleccionados...');
+        
+        // Ocultar selector de mapas
+        document.getElementById('mapSelectorScreen').style.display = 'none';
+
+        // Mostrar pantalla de juego
+        document.getElementById('gameScreen').style.display = 'block';
+
+        // Verificar si hay personaje seleccionado
+        const selectedCharacter = localStorage.getItem('selectedCharacter');
+        if (!selectedCharacter) {
+            console.warn('No hay personaje seleccionado, iniciando juego normal');
+            if (window.startGame) {
+                window.startGame();
+            }
+        } else {
+            console.log(`Iniciando juego con personaje: ${selectedCharacter}`);
+            // Iniciar juego con personaje seleccionado
+            if (window.startGameWithSelectedCharacter) {
+                window.startGameWithSelectedCharacter();
+            } else {
+                console.warn('startGameWithSelectedCharacter no disponible, iniciando juego normal');
+                if (window.startGame) {
+                    window.startGame();
+                }
+            }
+        }
+
+        // Aplicar configuración del mapa
+        this.applyMapConfiguration();
+
+        this.hideLoadingMessage();
+    }
+
+    /**
+     * Inicia el juego con el mapa seleccionado (método original)
      */
     startGameWithMap() {
         // Ocultar selector de mapas

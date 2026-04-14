@@ -78,16 +78,28 @@ class CraftingUI {
                 <h2 style="margin: 0; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">
                     Mesa de Fabricación Medieval
                 </h2>
-                <button onclick="window.craftingUI.close()" style="
-                    background: rgba(212, 175, 55, 0.2);
-                    border: 2px solid #d4af37;
-                    color: #d4af37;
-                    padding: 8px 15px;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    font-family: 'Times New Roman', serif;
-                    font-size: 16px;
-                ">Cerrar</button>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="window.backToMenu()" style="
+                        background: rgba(212, 175, 55, 0.2);
+                        border: 2px solid #d4af37;
+                        color: #d4af37;
+                        padding: 8px 15px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-family: 'Times New Roman', serif;
+                        font-size: 16px;
+                    ">Menú</button>
+                    <button onclick="window.craftingUI.close()" style="
+                        background: rgba(212, 175, 55, 0.2);
+                        border: 2px solid #d4af37;
+                        color: #d4af37;
+                        padding: 8px 15px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-family: 'Times New Roman', serif;
+                        font-size: 16px;
+                    ">Cerrar</button>
+                </div>
             </div>
 
             <!-- Main Content -->

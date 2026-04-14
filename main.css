@@ -328,6 +328,30 @@ body {
     object-position: center;
     z-index: -1;
     overflow: hidden;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Container del juego - oculto en menú principal */
+#container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    display: none; /* Oculto por defecto, solo visible en juego */
+}
+
+/* Container visible solo cuando gameScreen está activo */
+#gameScreen:active ~ #backgroundVideo,
+#gameScreen:not([style*="display: none"]) ~ #backgroundVideo {
+    display: none !important;
+}
+
+#gameScreen:not([style*="display: none"]) ~ #container {
+    display: block !important;
 }
 
 /* Intro Container responsivo */
